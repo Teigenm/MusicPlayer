@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="12dp">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="128dp"
+        android:background="@mipmap/background_horizontal_04">
+
+        <TextView
+            android:id="@+id/item_history_song_name_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:text="@string/number_two_song_name"
+            android:textColor="@color/white"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="36dp"
+            android:layout_marginStart="24dp"/>
+        <TextView
+            android:id="@+id/item_history_singer_name_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text="@string/number_two_singer_name"
+            android:textColor="@color/white"
+            android:layout_marginTop="4dp"
+            app:layout_constraintTop_toBottomOf="@id/item_history_song_name_text_view"
+            app:layout_constraintStart_toStartOf="@id/item_history_song_name_text_view"
+            />
+        <RelativeLayout
+            android:layout_width="32dp"
+            android:layout_height="24dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="8dp"
+            android:background="@color/red_700"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/item_history_recent_release_number__text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/history_number_text"
+                android:textColor="@color/white"
+                android:textSize="12sp" />
+        </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

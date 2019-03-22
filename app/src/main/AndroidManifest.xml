@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.tangguogen.musicplayer_teigen">
+
+    <application
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+        android:name=".app.MusicApplication"
+>>>>>>> commit
+>>>>>>> create
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher_ship"
+        android:label="@string/app_name"
+        android:roundIcon="@drawable/ic_launcher_ship"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".ui.splash.SplashActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:theme="@style/SplashStyle">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> create
+
+        </activity>
+
+        <activity
+            android:name=".ui.HomeActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+
+<<<<<<< HEAD
+=======
+=======
+        </activity>
+        <activity
+            android:name=".ui.home.HomeActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".ui.home.HistoryActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+>>>>>>> commit
+>>>>>>> create
+    </application>
+
+</manifest>
