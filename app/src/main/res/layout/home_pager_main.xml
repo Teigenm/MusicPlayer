@@ -25,11 +25,11 @@
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 android:orientation="vertical">
 
-                <include layout="@layout/item_song_list" />
-                <include layout="@layout/item_song_list" />
-                <include layout="@layout/item_song_list" />
-                <include layout="@layout/item_song_list" />
-                <include layout="@layout/item_song_list" />
+                <include layout="@layout/item_song_list_layout" />
+                <include layout="@layout/item_song_list_layout" />
+                <include layout="@layout/item_song_list_layout" />
+                <include layout="@layout/item_song_list_layout" />
+                <include layout="@layout/item_song_list_layout" />
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

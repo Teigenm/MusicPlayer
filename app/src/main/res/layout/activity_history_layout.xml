@@ -6,9 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.home.HistoryActivity"
     android:orientation="vertical">
-
-    <include android:layout="@layout/common_appbar_toolbar_layout"/>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -65,7 +62,7 @@
                         android:id="@+id/history_number_two_recent_release_text_view"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/history_number_text"
+                        android:text="@string/text_history_number"
                         android:textColor="@color/white"
                         android:textSize="12sp" />
                 </RelativeLayout>
@@ -141,7 +138,7 @@
                         android:id="@+id/history_number_one_recent_release_text_view"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/history_number_text"
+                        android:text="@string/text_history_number"
                         android:textColor="@color/white"
                         android:textSize="12sp" />
                 </RelativeLayout>
@@ -217,7 +214,7 @@
                         android:id="@+id/history_number_three_recent_release_text_view"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/history_number_text"
+                        android:text="@string/text_history_number"
                         android:textColor="@color/white"
                         android:textSize="12sp" />
                 </RelativeLayout>
@@ -260,8 +257,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:textColor="@color/black"
-            android:text="@string/history_play_time_most_text"/>
+            android:text="@string/text_history_play_time_most"/>
     </LinearLayout>
-    <include layout="@layout/item_history_song">
+    <include layout="@layout/item_history_song_layout">
     </include>
 </LinearLayout>

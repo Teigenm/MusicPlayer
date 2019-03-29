@@ -1,30 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- 标题属性 -->
-    <declare-styleable name="TitleAttr">
-        <attr name="title_name" format="reference|string"/>
-        <attr name="title_text_color" format="reference|color"/>
-        <attr name="title_drawable_right" format="reference"/>
-        <attr name="title_drawable_left" format="reference"/>
-        <attr name="title_text_size" format="reference|dimension"/>
-        <attr name="left_text" format="reference|string"/>
-        <attr name="left_image" format="reference"/>
-        <attr name="small_text_size" format="reference|dimension"/>
-        <attr name="title_gravity">
-            <enum name="left" value="3"/>
-            <enum name="center" value="17"/>
-            <enum name="right" value="5"/>
-        </attr>
-        <attr name="right_image" format="reference"/>
-        <attr name="right_text" format="reference|string"/>
-        <attr name="right_image_two" format="reference"/>
-        <attr name="right_text_two" format="reference|string"/>
-        <attr name="title_height" format="dimension"/>
-        <attr name="right_text_drawable_right" format="reference"/>
-        <attr name="right_text_drawable_left" format="reference"/>
-        <attr name="right_text_two_drawable_right" format="reference"/>
-        <attr name="right_text_two_drawable_left" format="reference"/>
-        <attr name="left_text_drawable_right" format="reference"/>
-        <attr name="left_text_drawable_left" format="reference"/>
+
+    <declare-styleable name="WheelView">
+        <attr name="android:textSize" />
+        <attr name="android:textColor" />
+        <attr name="textGradual" format="boolean" />
+        <attr name="halfVisibleItemCount" format="integer" />
+        <attr name="maximumWidthText" format="string" />
+        <attr name="selectedTextColor" format="color" />
+        <attr name="selectedTextSize" format="dimension" />
+        <attr name="currentPosition" format="integer" />
+        <attr name="widthSpace" format="dimension" />
+        <attr name="heightSpace" format="dimension" />
+        <attr name="zoomInSelectedItem" format="boolean" />
+        <attr name="wheelCyclic" format="boolean" />
+        <attr name="wheelCurtain" format="boolean" />
+        <attr name="wheelCurtainColor" format="color" />
+        <attr name="wheelCurtainBorder" format="boolean" />
+        <attr name="wheelCurtainBorderColor" format="color" />
+        <attr name="indicatorText" format="string" />
+        <attr name="indicatorTextSize" format="dimension" />
+        <attr name="indicatorTextColor" format="color" />
     </declare-styleable>
+
 </resources>

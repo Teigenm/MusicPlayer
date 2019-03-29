@@ -4,13 +4,5 @@
     android:layout_height="wrap_content"
     android:layout_width="match_parent">
 
-<<<<<<< HEAD
-    <include layout="@layout/home_toolbar_layout"/>
-=======
-<<<<<<< HEAD
-    <include layout="@layout/home_toolbar_layout"/>
-=======
     <include layout="@layout/common_toolbar_layout"/>
->>>>>>> commit
->>>>>>> create
 </com.google.android.material.appbar.AppBarLayout>

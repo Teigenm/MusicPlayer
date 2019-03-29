@@ -25,7 +25,7 @@
             <ImageView
                 android:layout_width="16dp"
                 android:layout_height="16dp"
-                app:srcCompat="@drawable/ic_start"
+                app:srcCompat="@drawable/ic_no_fill_start"
                 android:tint="@color/white"/>
         </RelativeLayout>
     </RelativeLayout>
@@ -45,7 +45,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="@string/favorite_music_text"
+        android:text="@string/text_favorite_music"
         app:layout_constraintTop_toBottomOf="@id/item_my_song_list_text_view"
         app:layout_constraintStart_toStartOf="@id/item_my_song_list_text_view"/>
     <TextView
@@ -53,7 +53,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="@string/favorite_music_number_text"
+        android:text="@string/text_favorite_music_number"
         app:layout_constraintTop_toBottomOf="@id/item_favorite_music_text_view"
         app:layout_constraintStart_toStartOf="@id/item_favorite_music_text_view"/>
     <ImageView

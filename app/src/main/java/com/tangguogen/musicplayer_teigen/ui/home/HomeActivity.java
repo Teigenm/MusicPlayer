@@ -1,28 +1,33 @@
 package com.tangguogen.musicplayer_teigen.ui.home;
 
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.viewpager.widget.ViewPager;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.RelativeLayout;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.google.android.material.navigation.NavigationView;
 import com.tangguogen.musicplayer_teigen.R;
+import com.tangguogen.musicplayer_teigen.app.BaseActivity;
 import com.tangguogen.musicplayer_teigen.utils.Toaster;
 
-public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
+public class HomeActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener,View.OnClickListener{
 
     private long mLastPressedTime = 0;
     private DrawerLayout mDrawerLayout;
-    private RelativeLayout mRelativeLayout;
+    private ConstraintLayout mHomeHistoryLayout;
+    private ImageView mHomeHistoryImageView;
+    private LinearLayout mHomeItemAllSongLayout;
+
     public static void go(Context context){
         Intent intent = new Intent();
         intent.setClass(context,HomeActivity.class);
@@ -37,7 +42,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void initView() {
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.home_toolbar);
         setSupportActionBar(toolbar);
 
         mDrawerLayout = findViewById(R.id.home_drawer_layout);
@@ -48,8 +53,59 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = findViewById(R.id.home_navigation_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        mRelativeLayout = findViewById(R.id.home_playing);
-        mRelativeLayout.bringToFront();
+        mHomeHistoryLayout = findViewById(R.id.home_history_layout);
+        mHomeHistoryLayout.setOnClickListener(HomeActivity.this);
+
+        mHomeHistoryImageView = findViewById(R.id.home_history_image_view);
+        mHomeHistoryImageView.setOnClickListener(HomeActivity.this);
+
+        mHomeItemAllSongLayout = findViewById(R.id.home_item_all_song_layout);
+        mHomeItemAllSongLayout.setOnClickListener(HomeActivity.this);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.home_title_menu, menu);//指定Toolbar上的视图文件
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+        switch (id){
+            case R.id.menu_home_search:
+                SearchMusicActivity.go(HomeActivity.this);
+                break;
+                default:break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.nav_night_mode){
+            Toaster.showToast("11111");
+        }
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        switch (id){
+            case R.id.home_history_layout:
+                HistoryActivity.go(HomeActivity.this);
+                break;
+            case R.id.home_history_image_view:
+                HistoryActivity.go(HomeActivity.this);
+                break;
+            case R.id.home_item_all_song_layout:
+                AllSongActivity.go(HomeActivity.this);
+                break;
+            default:break;
+        }
     }
 
     @Override
@@ -65,29 +121,5 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         } else {
             finish();
         }
-    }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.home_title_menu, menu);//指定Toolbar上的视图文件
-        return true;
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        int id = item.getItemId();
-        if (id == R.id.ab_search) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.nav_night_mode){
-            Toaster.showToast("11111");
-        }
-        mDrawerLayout.closeDrawer(GravityCompat.START);
-        return true;
     }
 }

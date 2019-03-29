@@ -6,15 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import androidx.annotation.Nullable;
-<<<<<<< HEAD
-import androidx.core.util.Preconditions;
-=======
-<<<<<<< HEAD
-import androidx.core.util.Preconditions;
-=======
 
->>>>>>> commit
->>>>>>> create
 
 /**
  * Class description:

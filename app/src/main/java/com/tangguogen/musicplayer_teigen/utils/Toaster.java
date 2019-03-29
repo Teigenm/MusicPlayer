@@ -4,14 +4,6 @@ import android.content.Context;
 import android.widget.Toast;
 
 import androidx.annotation.StringRes;
-<<<<<<< HEAD
-import androidx.core.util.Preconditions;
-=======
-<<<<<<< HEAD
-import androidx.core.util.Preconditions;
-=======
->>>>>>> commit
->>>>>>> create
 
 /**
  * Class description:

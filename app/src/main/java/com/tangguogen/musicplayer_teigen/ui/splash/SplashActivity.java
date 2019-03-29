@@ -5,15 +5,7 @@ import android.os.Handler;
 import android.view.View;
 
 import com.tangguogen.musicplayer_teigen.app.BaseActivity;
-<<<<<<< HEAD
-import com.tangguogen.musicplayer_teigen.ui.HomeActivity;
-=======
-<<<<<<< HEAD
-import com.tangguogen.musicplayer_teigen.ui.HomeActivity;
-=======
 import com.tangguogen.musicplayer_teigen.ui.home.HomeActivity;
->>>>>>> commit
->>>>>>> create
 
 /**
  * Class description:
@@ -56,6 +48,6 @@ public class SplashActivity extends BaseActivity implements Runnable {
     @Override
     protected void onResume() {
         super.onResume();
-        mHandler.postDelayed(this, 2000);
+        mHandler.postDelayed(this, 500);
     }
 }

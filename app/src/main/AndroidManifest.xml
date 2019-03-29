@@ -3,13 +3,7 @@
     package="com.tangguogen.musicplayer_teigen">
 
     <application
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
         android:name=".app.MusicApplication"
->>>>>>> commit
->>>>>>> create
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher_ship"
         android:label="@string/app_name"
@@ -28,35 +22,24 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> create
-
-        </activity>
-
-        <activity
-            android:name=".ui.HomeActivity"
-            android:label="@string/app_name"
-            android:launchMode="singleTask"
-            android:windowSoftInputMode="adjustResize|stateHidden" />
-
-<<<<<<< HEAD
-=======
-=======
         </activity>
         <activity
             android:name=".ui.home.HomeActivity"
             android:label="@string/app_name"
-            android:launchMode="singleTask"
-            android:windowSoftInputMode="adjustResize|stateHidden" />
+            android:launchMode="singleTask" />
         <activity
             android:name=".ui.home.HistoryActivity"
-            android:label="@string/app_name"
+            android:label="@string/text_history_play_time_most"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".ui.home.SearchMusicActivity"
+            android:label=""
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize|stateHidden" />
->>>>>>> commit
->>>>>>> create
+        <activity android:name=".ui.home.AllSongActivity"
+            android:label=""
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize|stateHidden"/>
     </application>
 
 </manifest>
