@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:paddingEnd="4dp"
+        android:paddingStart="4dp">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/song_single_table__layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="4dp"
+            android:paddingBottom="8dp">
+
+            <ImageView
+                android:id="@+id/song_single_table_play_mode_image_view"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:tint="@color/gray"
+                app:srcCompat="@drawable/ic_random_play"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="8dp"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginStart="8dp"
+                android:text="@string/text_play_mode_and_number"
+                app:layout_constraintTop_toTopOf="@id/song_single_table_play_mode_image_view"
+                app:layout_constraintStart_toEndOf="@id/song_single_table_play_mode_image_view"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@drawable/ic_three_horizontal_line">
+        </LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/song_single_table_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
