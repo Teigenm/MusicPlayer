@@ -1,0 +1,57 @@
+<resources>
+    <string name="app_name">梦想音乐</string>
+
+    <string name="text_navigation_drawer_open">Open navigation drawer</string>
+    <string name="text_navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="nav_header_title">梦想为帆·Android</string>
+
+    <string name="text_history_play">历史最多播放</string>
+    <string name="text_play">播放</string>
+    <string name="text_play_times">次</string>
+    <string name="text_play_number">2</string>
+    <string name="text_see_more">查看更多</string>
+    <string name="text_created_song_list">创建的歌单(2)</string>
+    <string name="text_new_song_list">新建</string>
+    <string name="text_my_song_list">我的歌单</string>
+    <string name="text_favorite_music">收藏喜欢的歌曲</string>
+    <string name="text_favorite_music_number">0首</string>
+    <string name="text_all_music">全部歌曲</string>
+    <string name="text_my_favorite">我的收藏</string>
+    <string name="text_recent_release">最近播放</string>
+    <string name="text_search_music">搜索音乐</string>
+    <string name="text_my_song_list_description">收藏喜欢的歌单</string>
+    <string name="text_my_song_list_create_time">创建时间：2019-03-30</string>
+
+    <string name="text_history_number">3次</string>
+    <string name="text_history_play_time_most">播放次数最多的10首歌</string>
+    <string name="text_play_mode_and_number">随机播放1首歌曲</string>
+    <string name="text_search_all_song">从4首歌曲中检索</string>
+
+    <string name="text_song">歌曲：</string>
+    <string name="text_add_to_playing_list">添加至播放列表</string>
+    <string name="text_song_detail">歌曲详情</string>
+    <string name="text_delete">删除</string>
+
+
+    <string name="one">1</string>
+    <string name="two">2</string>
+    <string name="three">3</string>
+
+    <string name="number_one_singer_name">林俊杰</string>
+    <string name="number_one_song_name">Always Online</string>
+    <string name="number_one_song_duration_time">03:46</string>
+
+    <string name="number_two_song_name">体面</string>
+    <string name="number_two_singer_name">于文文</string>
+
+    <string name="number_three_song_name">说散就散</string>
+    <string name="number_three_singer_name">袁娅维</string>
+
+    <string name="prompt_load_message">加载中……</string>
+    <string name="text_choose_date">选择时间</string>
+    <string name="text_prompt">提示</string>
+    <string name="text_ok">确定</string>
+    <string name="text_cancel">取消</string>
+
+</resources>
