@@ -1,0 +1,28 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.teigenm.coursemanager.ui.CourseViewActivity">
+
+    <item
+        android:id="@+id/action_course_view"
+        android:orderInCategory="100"
+        android:title="课程管理"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_course_view_manager"
+        android:orderInCategory="100"
+        android:title="课程管理"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_course_view_diary"
+        android:orderInCategory="100"
+        android:title="课程笔记"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_course_view_delete"
+        android:orderInCategory="100"
+        android:title="删除该课程"
+        app:showAsAction="never"
+        android:icon="@mipmap/ic_launcher"/>
+
+</menu>
