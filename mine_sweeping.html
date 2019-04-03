@@ -1,0 +1,378 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>扫雷</title>
+</head>
+<style type="text/css">
+    *{margin:0px;padding:0px;}
+    .container{width:400px;height:40px;margin:5px auto 0;}
+    .mine_prompt{width:55%;float: left;}
+    .game_level{width:45%;float:right;}
+    #main_mine{margin:55px auto;}
+    tr td{
+        width: 30px;
+        height: 30px;
+    }
+    .mine{
+        width: 30px;
+        height: 30px;
+        border-width: 1px;
+        border-radius: 3px;
+        background: #1E90FF;
+        cursor: pointer;
+        outline: none;
+        font-family: Microsoft YaHei;
+        color: #ff4a46;
+        font-size:18px;
+        text-align:center;
+    }
+    .mine:hover{
+         background: #6ed3ff;
+         -webkit-transition: all 0.1s ease-in-out 0s;
+         -moz-transition: all 0.1s ease-in-out 0s;
+         -ms-transition: all 0.1s ease-in-out 0s;
+         transition: all 0.1s ease-in-out 0s;
+     }
+    .mine:active{
+        background: #1E90FF;
+    }
+    #cols,#rows,#mine_number{width:40px;}
+    #score_list{position: absolute;top:5px;right:5px;}
+</style>
+<body>
+    <div class="container">
+        <div style="width: 100%;">
+            <div class="mine_prompt">
+                <span>剩下的地雷数:</span>
+                <span id="mark_num" style="color:red">
+                </span><span>个</span>
+            </div>
+            <div class="game_level">
+                <span>难度:</span>
+                <input type="button" id="level_3" value="高级" onclick="initBoard(18,45,120);"/>&nbsp;&nbsp;
+                <input type="button" id="level_2" value="中级" onclick="initBoard(15,25,55);"/>&nbsp;&nbsp;
+                <input type="button" id="level_1" value="初级" onclick="initBoard(10,12,25);"/>&nbsp;&nbsp;
+            </div>
+        </div>
+        <p>自定义:</p>
+        <div class="custom" style="width: 100%;">
+            <div style="float:left;">
+                <span>行:</span>
+                <input type="text" id="rows" value="10"/>&nbsp;&nbsp;
+                <span>列:</span>
+                <input type="text" id="cols" value="12"/>
+            </div>&nbsp;&nbsp;
+            <div style="float:right;">
+                <span>地雷数:</span>
+                <input type="text" id="mine_number" value="25"/>&nbsp;&nbsp;
+                <input type="button" id="confirm" value="确认"/>&nbsp;&nbsp;
+            </div>
+        </div>
+        <div style="width: 100px;margin:5px auto;">
+            <span>时间:</span>
+            <span id="time" style="color:red;">100</span>
+        </div>
+    </div>
+    <table id="score_list" width="250" cellpadding="0" cellspacing="0" border="1">
+        <tr>
+            <th colspan="3">英雄榜</th>
+        </tr>
+        <tr>
+            <td width="30%">名次</td>
+            <td width="40%">玩家</td>
+            <td width="30%">时间</td>
+        </tr>
+        <tbody id="score_body">
+
+        </tbody>
+    </table>
+    <table id="main_mine" cellpadding="0" cellspacing="0">
+
+    </table>
+</body>
+<script type="text/javascript">
+    var markNum ;
+    var mine; //-2雷 -1走过 0
+    var n,m;
+    var main_mine = document.getElementById("main_mine");
+    var mark_numObj = document.getElementById("mark_num");
+    var dir = [[1,1],[1,0],[1,-1],[0,1],[0,-1],[-1,1],[-1,0],[-1,-1]];
+    var f = [[1,0],[0,1],[0,-1],[-1,0]];
+    var gameOver;
+    var visitedColor = "#5fff46";
+    var myMark;
+    var timeObj = document.getElementById("time");
+    var time = 0;
+    var interval = null;
+    var cols = document.getElementById('cols');
+    var rows = document.getElementById('rows');
+    var mine_number = document.getElementById('mine_number');
+
+    window.onload = function () {
+        initBoard(10,12,25);
+        getScoreList();
+    }
+    document.oncontextmenu = function(){
+        return false;
+    }
+    document.getElementById('confirm').onclick = function () {
+        var numMatch = /^[0-9]+.?[0-9]*$/;
+        if(!numMatch.test(cols.value) || !numMatch.test(rows.value) || !numMatch.test(mine_number.value)){
+            alert("请输入规范数字");
+            return ;
+        }
+        initBoard(rows.value,cols.value,mine_number.value);
+    }
+    function initBoard(n,m,markNum) {
+        this.n = n;
+        this.m = m;
+        this.markNum = markNum;
+        this.gameOver = false;
+        this.time = 0;
+        timeObj.innerText = time;
+        cols.value = m;
+        rows.value = n;
+        mine_number.value = markNum;
+
+        mine = new Array();
+        myMark = new Array();
+        for(var i=0;i<n;i++){
+            mine[i] = new Array();
+            myMark[i] = new Array();
+            for(var j=0;j<m;j++){
+                mine[i][j] = 0;
+                myMark[i][j] = 0;
+            }
+        }
+        randomMine();
+        createBoard();
+        if(interval == null){
+            interval = setInterval(timeGoesBy,1000);
+        }
+    }
+    function cmp(a,b) {
+        return a.time>b.time;
+    }
+    function getScoreList() {
+
+        var scorelist = document.cookie.split(";");
+        console.log(scorelist);
+        if(scorelist[0]==""){
+            return ;
+        }
+        var list = new Array();
+        for(var i=0;i<scorelist.length;i++){
+            var temp = scorelist[i].split("=");
+            list[i] = {user:temp[0],time:temp[1]};
+        }
+        list.sort(cmp);
+
+        var scoreBodyObj = document.getElementById("score_body");
+        scoreBodyObj.innerText = "";
+        for(var i=0;i<list.length;i++) {
+            var tr = document.createElement("tr");
+            var temp = list[i];
+            var td = document.createElement("td");
+            td.innerText = i+1;
+            tr.appendChild(td);
+
+            td = document.createElement("td");
+            td.innerText = temp.user;
+            tr.appendChild(td);
+
+            td = document.createElement("td");
+            td.innerText = temp.time;
+            tr.appendChild(td);
+
+            scoreBodyObj.appendChild(tr);
+        }
+    }
+    function createBoard() {
+        main_mine.innerText="";
+        mark_numObj.innerHTML=markNum;
+        for(var i=0;i<n;i++){
+            var tr = document.createElement("tr");
+            for(var j=0;j<m;j++){
+                var td = document.createElement("td");
+                var button = document.createElement("input");
+                button.type = "button";
+                button.value = "";
+                button.id = "btn_"+i+"_"+j;
+                button.className="mine";
+                button.onmousedown = function (event) {
+                    event = event||window.event;
+                    var str = this.id.split('_');
+                    var x = parseInt(str[1]);
+                    var y = parseInt(str[2]);
+                    console.log(mine[x][y]);
+                    if(event.button == 2 && mine[x][y]!=-1 ){
+                        if(this.value != "♜"){
+                            if(markNum>0){
+                                myMark[x][y] = 1;
+                                markNum--;
+                                this.value = "♜";
+                                this.style.color = "#FFFFFF";
+                            }
+                        }else{
+                            myMark[x][y] = 0;
+                            this.style.color = "#ea3326";
+                            markNum++;
+                            this.value = "";
+                        }
+                        if(markNum == 0){
+                            setTimeout(ifWin,150);
+                        }
+                        mark_numObj.innerText = markNum;
+                        console.log(markNum);
+                    }else if(event.button == 0){
+                        if(mine[x][y]==-2){
+                            this.value = "✸";
+                            this.style.color = "#FFFFFF"
+                            this.style.backgroundColor = "#ea3326";
+                            gameOver = true;
+                            setTimeout(function () {
+                                alert("GAME OVER!");
+                                gameClear();
+                            },150);
+                            return ;
+                        }else if(mine[x][y] == 0){
+                            dfs(x,y);
+                        }
+                    }
+                }
+                td.appendChild(button);
+                tr.appendChild(td);
+            }
+            main_mine.appendChild(tr);
+        }
+    }
+    function gameClear() {
+        clearInterval(interval);
+        interval = null;
+        for(var i=0;i<n;i++){
+            for(var j=0;j<m;j++){
+                var obj = document.getElementById("btn_"+i+"_"+j);
+                if(mine[i][j]==-2){
+                    obj.value = "✸";
+                    obj.style.color = "#FFFFFF"
+                    obj.style.backgroundColor = "#ea3326";
+                }
+            }
+        }
+    }
+    function ifWin() {
+        var win = 1;
+        for(var i=0;i<n;i++){
+            for(var j=0;j<m;j++){
+                if(myMark[i][j] == 1 && mine[i][j] != -2){
+                    win = 0;
+                }
+            }
+        }
+        if(win == 1){
+            clearInterval(interval);
+            interval = null;
+            var user = prompt("恭喜你通关了,请输入你的名字记录名次！");
+            if(user!="" && user!=null) {
+                includeList(user);
+            }
+            gameClear();
+        }
+    }
+    function includeList(user) {
+        setCookie(user,time);
+        getScoreList();
+    }
+    function dfs(x,y) {
+        if(gameOver){
+            return ;
+        }
+        var obj = document.getElementById("btn_"+x+"_"+y);
+        obj.style.background = visitedColor;
+        obj.style.color = "#ea3326";
+        if(mine[x][y]==0){
+            mine[x][y] = -1;
+            obj.value = "";
+        }
+        var sum = 0;
+        for(var i=0;i<8;i++){
+            var dx = x+dir[i][0];
+            var dy = y+dir[i][1];
+            if(dx>=0 && dx<n && dy>=0 && dy<m && mine[dx][dy]==-2){
+                sum++;
+            }
+        }
+        if(sum>0){
+            obj.value = sum;
+        }
+        for(var i=0;i<4;i++){
+            var fx = x+f[i][0];
+            var fy = y+f[i][1];
+           // console.log(fx+" "+fy);
+            if(judgeRange(fx,fy)){
+                continue;
+            }
+            sum = 0;
+            for(var j=0;j<8;j++){
+                var dx = fx+dir[j][0];
+                var dy = fy+dir[j][1];
+                if(dx>=0 && dx<n && dy>=0 && dy<m && mine[dx][dy] == -2){
+                    sum++;
+                }
+            }
+            if(sum>0){
+                obj = document.getElementById("btn_"+fx+"_"+fy);
+                obj.style.background = visitedColor;
+                obj.value = sum;
+                obj.style.color = "#ea3326";
+                if(mine[fx][fy]==0){
+                    mine[fx][fy] = -1;
+                }
+            }else{
+                dfs(fx,fy);
+            }
+        }
+    }
+    function timeGoesBy() {
+        timeObj.innerText = ++time;
+    }
+    function judgeRange(x,y) {
+        if(x<0||x>=n||y<0||y>=m){
+            return 1;
+        }
+        if(mine[x][y] == -2 || mine[x][y] == -1){
+            return 1;
+        }
+        return 0;
+    }
+    function randomMine(){
+        var i=0;
+        while(i<markNum){
+            var x = parseInt(Math.random()*n);
+            var y = parseInt(Math.random()*m);
+            if(mine[x][y] == 0){
+                mine[x][y] = -2;//地雷
+            }else{
+                continue;
+            }
+            i++;
+        }
+    }
+    function getCookie(name)
+    {
+        var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
+        if(arr=document.cookie.match(reg))
+            return unescape(arr[2]);
+        else
+            return null;
+    }
+    function setCookie(name,value)
+    {
+        var Days = 30;
+        var exp = new Date();
+        exp.setTime(exp.getTime() + Days*24*60*60*1000);
+        document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString();
+    }
+</script>
+</html>
