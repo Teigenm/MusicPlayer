@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.tgg.musicplayer">
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <application
+        android:name="com.tgg.musicplayer.app.MusicApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher_ship"
+        android:label="@string/app_name"
+        android:roundIcon="@drawable/ic_launcher_ship"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name="com.tgg.musicplayer.ui.splash.SplashActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:theme="@style/SplashStyle">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.tgg.musicplayer.ui.home.HomeActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTask" />
+        <activity
+            android:name="com.tgg.musicplayer.ui.home.HistoryActivity"
+            android:label="@string/text_history_play_time_most"
+            android:launchMode="singleTask" />
+        <activity
+            android:name="com.tgg.musicplayer.ui.home.SearchMusicActivity"
+            android:label=""
+            android:launchMode="singleTask" />
+        <activity android:name="com.tgg.musicplayer.ui.song.AllSongActivity"
+            android:label=""
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize|stateHidden"/>
+        <activity android:name="com.tgg.musicplayer.ui.song.MyFavoriteActivity"
+            android:label=""
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize|stateHidden"/>
+        <activity android:name="com.tgg.musicplayer.ui.song.RecentReleaseActivity"
+            android:label=""
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize|stateHidden"/>
+        <activity android:name="com.tgg.musicplayer.ui.song.SongListActivity"
+            android:label=""
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize|stateHidden">
+        </activity>
+        <activity android:name="com.tgg.musicplayer.ui.song.MusicPlayingActivity"
+            android:label=""
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize|stateHidden"/>
+
+        <service android:name=".service.MediaService"/>
+    </application>
+
+</manifest>

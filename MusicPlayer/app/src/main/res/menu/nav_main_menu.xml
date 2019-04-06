@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+    <group android:checkableBehavior="single">
+        <item android:title="工具">
+            <menu>
+                <item
+                    android:id="@+id/nav_timed_stop"
+                    android:icon="@drawable/ic_menu_timed_stop"
+                    android:title="定时停止播放" />
+                <item
+                    android:id="@+id/nav_photo_wall"
+                    android:icon="@drawable/ic_menu_photo_wall"
+                    android:title="照片墙" />
+            </menu>
+        </item>
+    </group>
+
+    <item android:title="外观定制">
+        <menu>
+            <item
+                android:id="@+id/nav_play_style"
+                android:icon="@drawable/ic_menu_play_style"
+                android:title="播放界面风格" />
+            <item
+                android:id="@+id/nav_theme_color"
+                android:icon="@drawable/ic_menu_theme_color"
+                android:title="主题色定制" />
+            <item
+                android:id="@+id/nav_night_mode"
+                android:icon="@drawable/ic_menu_night_mode"
+                android:title="夜间模式" />
+        </menu>
+    </item>
+
+    <item android:title="系统设置">
+        <menu>
+            <item
+                android:id="@+id/nav_user_guide"
+                android:icon="@drawable/ic_menu_user_guide"
+                android:title="用户指南" />
+            <item
+                android:id="@+id/nav_setting"
+                android:icon="@drawable/ic_menu_setting"
+                android:title="设    置" />
+            <item
+                android:id="@+id/nav_exit"
+                android:icon="@drawable/ic_menu_exit"
+                android:title="退    出" />
+        </menu>
+    </item>
+
+</menu>
