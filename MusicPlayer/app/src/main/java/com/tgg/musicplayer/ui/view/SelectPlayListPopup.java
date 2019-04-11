@@ -2,7 +2,9 @@ package com.tgg.musicplayer.ui.view;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -11,6 +13,18 @@ import android.view.WindowManager;
 import android.widget.PopupWindow;
 
 import com.tgg.musicplayer.R;
+import com.tgg.musicplayer.app.RecyclerViewTouchListener;
+import com.tgg.musicplayer.app.UserManager;
+import com.tgg.musicplayer.service.MediaService;
+import com.tgg.musicplayer.ui.home.HomeActivity;
+import com.tgg.musicplayer.utils.Toaster;
+import com.tgg.musicplayer.utils.log.Logger;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class SelectPlayListPopup implements View.OnClickListener {
     public PopupWindow mPopupWindow;
@@ -47,6 +61,29 @@ public class SelectPlayListPopup implements View.OnClickListener {
 
     public View initViews() {
         View view = LayoutInflater.from(mContext).inflate(R.layout.select_play_list_pop_window, null);
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(mContext) );
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.addItemDecoration(new DividerItemDecoration(mContext , DividerItemDecoration.VERTICAL) );
+        PlayListAdapter adapter = new PlayListAdapter(UserManager.getInstance().getMyBinder().getMusicList());
+        recyclerView.setAdapter(adapter);
+
+        recyclerView.addOnItemTouchListener(new RecyclerViewTouchListener(mContext,
+                new RecyclerViewTouchListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        Logger.d(position+"");
+                        MediaService.MyBinder myBinder = UserManager.getInstance().getMyBinder();
+                        myBinder.setPos(position);
+                        myBinder.initMediaPlayer();
+                        myBinder.playMusic();
+                    }
+                 },new RecyclerViewTouchListener.OnItemLongClickListener() {
+                    @Override
+                    public void onItemLongClick(View view, int position) {
+                        Toaster.showToast(position+"");
+                    }
+            }));
 
         return view;
     }

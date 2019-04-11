@@ -1,9 +1,8 @@
-package com.tgg.musicplayer.utils.media;
+package com.tgg.musicplayer.utils.loader;
 
 import android.content.Context;
 
 import com.tgg.musicplayer.model.MusicEntity;
-import com.tgg.musicplayer.utils.log.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,7 +15,7 @@ import java.util.List;
  * @Description
  *
  */
-public class MusicList {
+public class MusicLoader {
     private static Object sLock = new Object();
     private static List<MusicEntity> sMusicList = null;
 
@@ -25,10 +24,10 @@ public class MusicList {
             synchronized(sLock) {
                 if(sMusicList == null){
                     sMusicList = new ArrayList<MusicEntity>();
-                    for(MusicEntity entity : MediaUtils.getAudioList(context) ) {
+                    for(AudioEntity entity : MediaUtils.getAudioList(context) ) {
                         if(entity.isMusic() && entity.getDuration() > 40*1000){
-                            Logger.e(entity.toString());
-                            sMusicList.add(entity);
+                            //Logger.d(entity.toString());
+                            sMusicList.add(new MusicEntity(entity));
                         }
                     }
                 }

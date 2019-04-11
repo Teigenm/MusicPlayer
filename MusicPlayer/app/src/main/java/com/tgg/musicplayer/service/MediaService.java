@@ -8,6 +8,8 @@ import android.os.Binder;
 import android.os.IBinder;
 
 import com.tgg.musicplayer.model.MusicEntity;
+import com.tgg.musicplayer.utils.loader.AudioEntity;
+import com.tgg.musicplayer.utils.log.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,11 +19,10 @@ import androidx.annotation.Nullable;
 
 public class MediaService extends Service {
 
-    private static final String TAG = MediaService.class.getSimpleName();
     private MyBinder mBinder = new MyBinder();
     private MediaPlayer mMediaPlayer = null;
     private List<MusicEntity> mMusicList;
-    private int mPos = -1;
+    private int mPos ;
 
     @Override
     public void onCreate() {
@@ -29,21 +30,25 @@ public class MediaService extends Service {
         mMediaPlayer = new MediaPlayer();
         mMusicList = new ArrayList<MusicEntity>();
         mPos = 0;
+        Logger.d("创建");
     }
 
     @Override
     public int onStartCommand(Intent intent,int flags,int startId) {
+        Logger.d("启动");
         return super.onStartCommand(intent,flags,startId);
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
+        Logger.d("绑定");
         return mBinder;
     }
 
     @Override
     public void onDestroy() {
+        Logger.d("销毁");
         super.onDestroy();
     }
 
@@ -54,11 +59,13 @@ public class MediaService extends Service {
             return MediaService.this;
         }
 
-        public MediaPlayer getMediaPlayer() {
-           return mMediaPlayer;
-        }
+
         public void initMediaPlayer(){
+            if(mPos<0 || mPos >= mMusicList.size()) {
+                return ;
+            }
             try {
+                mMediaPlayer.reset();
                 mMediaPlayer.setDataSource(mMusicList.get(mPos).getPath());
                 mMediaPlayer.prepare();
             } catch (IOException e) {
@@ -66,29 +73,20 @@ public class MediaService extends Service {
             }
         }
         public void playMusic() {
-            if (!mMediaPlayer.isPlaying()) {
-                mMediaPlayer.start();
-            }
+            mMediaPlayer.start();
         }
 
         public void pauseMusic() {
-            if (!mMediaPlayer.isPlaying()) {
-                mMediaPlayer.pause();
-            }
+            mMediaPlayer.pause();
         }
-        public void controlMusic() {
-            if (!mMediaPlayer.isPlaying()) {
-                mMediaPlayer.start();
-            } else {
-                mMediaPlayer.pause();
-            }
+        public boolean isPlayingMusic() {
+            return mMediaPlayer.isPlaying();
         }
         public void nextMusic() {
             if (mMediaPlayer == null) {
                 return ;
             }
             mPos = (mPos +1) % mMusicList.size();
-            mMediaPlayer.reset();
             initMediaPlayer();
             playMusic();
         }
@@ -100,13 +98,11 @@ public class MediaService extends Service {
             if (mPos == -1) {
                 mPos = mMusicList.size()-1;
             }
-            mMediaPlayer.reset();
             initMediaPlayer();
             playMusic();
         }
         public void resetMusic() {
             if (!mMediaPlayer.isPlaying()) {
-                mMediaPlayer.reset();
                 initMediaPlayer();
             }
         }
@@ -118,7 +114,7 @@ public class MediaService extends Service {
             }
         }
 
-        public int getProgress() {
+        public int getDuration() {
             return mMediaPlayer.getDuration();
         }
 
@@ -144,6 +140,10 @@ public class MediaService extends Service {
 
         public int getPos() {
             return mPos;
+        }
+
+        public MusicEntity getMusicEntity () {
+            return mMusicList.get(mPos);
         }
     }
 

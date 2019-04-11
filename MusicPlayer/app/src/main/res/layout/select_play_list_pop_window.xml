@@ -35,6 +35,6 @@
                 android:tint="@color/black"
                 app:srcCompat="@drawable/ic_aim"/>
         </RelativeLayout>
-        <include layout="@layout/item_song_simple_detail_layout"/>
+        <include layout="@layout/common_recycler_view"/>
     </LinearLayout>
 </RelativeLayout>

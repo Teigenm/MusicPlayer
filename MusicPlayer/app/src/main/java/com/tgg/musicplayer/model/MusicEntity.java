@@ -1,127 +1,59 @@
 package com.tgg.musicplayer.model;
 
-import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.provider.MediaStore;
 
-
+import com.tgg.musicplayer.utils.loader.AudioEntity;
 
 public class MusicEntity implements Parcelable {
-    private String mTitle;
-    private String mTitleKey;
-    private String mArtist;
-    private String mArtistKey;
-    private String mAlbum;
-    private String mAlbumKey;
-    private String mAlbumArtist;
-    private String mComposer;
-    private String mPath;
-    private String mDisplayName;
-    private String mMimeType;
+    private long id; // 编号
+    private String songName; // 乐曲名
+    private String albumName; // 专辑名
+    private int duration; // 播放时长
+    private long size; // 文件大小
+    private String singerName; // 演唱者
+    private String path; // 文件路径
 
-    private int mId;
-    private int mSize;
-    private int mDateAdd;
-    private int mDuration;
-    private int mArtistId;
-    private int mAlbumId;
-    private int mTrack;
-    private int mYear;
+    public MusicEntity() {}
 
-    private boolean mIsDrm;
-    private boolean mIsRingtone;
-    private boolean mIsMusic;
-    private boolean mIsAlarm;
-    private boolean mIsNotification;
-    private boolean mIsPodcast;
-
-    public MusicEntity(Bundle bundle) {
-        mTitle = bundle.getString(MediaStore.Audio.AudioColumns.TITLE);
-        mTitleKey = bundle.getString(MediaStore.Audio.AudioColumns.TITLE_KEY);
-        mArtist = bundle.getString(MediaStore.Audio.AudioColumns.ARTIST);
-        mArtistKey = bundle.getString(MediaStore.Audio.AudioColumns.ARTIST_KEY);
-        mAlbum = bundle.getString(MediaStore.Audio.AudioColumns.ALBUM);
-        mAlbumKey = bundle.getString(MediaStore.Audio.AudioColumns.ALBUM_KEY);
-        //mAlbumArtist = bundle.getString(MediaStore.MusicEntity.AudioColumns.ALBUM_ARTIST);
-        mAlbumArtist = null;
-        mComposer = bundle.getString(MediaStore.Audio.AudioColumns.COMPOSER);
-        mPath = bundle.getString(MediaStore.Audio.AudioColumns.DATA);
-        mDisplayName = bundle.getString(MediaStore.Audio.AudioColumns.DISPLAY_NAME);
-        mMimeType = bundle.getString(MediaStore.Audio.AudioColumns.MIME_TYPE);
-
-        mId = bundle.getInt(MediaStore.Audio.AudioColumns._ID);
-        mSize = bundle.getInt(MediaStore.Audio.AudioColumns.SIZE);
-        mDateAdd = bundle.getInt(MediaStore.Audio.AudioColumns.DATE_ADDED);
-        mDuration = bundle.getInt(MediaStore.Audio.AudioColumns.DURATION);
-        mArtistId = bundle.getInt(MediaStore.Audio.AudioColumns.ARTIST_ID);
-        mAlbumId = bundle.getInt(MediaStore.Audio.AudioColumns.ALBUM_ID);
-        mTrack = bundle.getInt(MediaStore.Audio.AudioColumns.TRACK);
-        mYear = bundle.getInt(MediaStore.Audio.AudioColumns.YEAR);
-
-        mIsDrm = bundle.getInt(MediaStore.Audio.AudioColumns.IS_ALARM) == 1;
-        mIsRingtone = bundle.getInt(MediaStore.Audio.AudioColumns.IS_RINGTONE) == 1;
-        mIsMusic = bundle.getInt(MediaStore.Audio.AudioColumns.IS_MUSIC) == 1;
-        mIsAlarm = bundle.getInt(MediaStore.Audio.AudioColumns.IS_ALARM) == 1;
-        mIsNotification = bundle.getInt(MediaStore.Audio.AudioColumns.IS_NOTIFICATION) == 1;
-        mIsPodcast = bundle.getInt(MediaStore.Audio.AudioColumns.IS_PODCAST) == 1;
+    public MusicEntity(AudioEntity entity) {
+        this.id = entity.getId();
+        this.songName = entity.getTitle();
+        this.albumName = entity.getAlbum();
+        this.duration = entity.getDuration();
+        this.size = entity.getSize();
+        this.singerName = entity.getArtist();
+        this.path = entity.getPath();
+    }
+    public MusicEntity(long id, String songName, String albumName, int duration, long size, String singerName, String path) {
+        this.id = id;
+        this.songName = songName;
+        this.albumName = albumName;
+        this.duration = duration;
+        this.size = size;
+        this.singerName = singerName;
+        this.path = path;
     }
 
     protected MusicEntity(Parcel in) {
-        mTitle = in.readString();
-        mTitleKey = in.readString();
-        mArtist = in.readString();
-        mArtistKey = in.readString();
-        mAlbum = in.readString();
-        mAlbumKey = in.readString();
-        mAlbumArtist = in.readString();
-        mComposer = in.readString();
-        mPath = in.readString();
-        mDisplayName = in.readString();
-        mMimeType = in.readString();
-        mId = in.readInt();
-        mSize = in.readInt();
-        mDateAdd = in.readInt();
-        mDuration = in.readInt();
-        mArtistId = in.readInt();
-        mAlbumId = in.readInt();
-        mTrack = in.readInt();
-        mYear = in.readInt();
-        mIsDrm = in.readByte() != 0;
-        mIsRingtone = in.readByte() != 0;
-        mIsMusic = in.readByte() != 0;
-        mIsAlarm = in.readByte() != 0;
-        mIsNotification = in.readByte() != 0;
-        mIsPodcast = in.readByte() != 0;
+        id = in.readLong();
+        songName = in.readString();
+        albumName = in.readString();
+        duration = in.readInt();
+        size = in.readLong();
+        singerName = in.readString();
+        path = in.readString();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(mTitle);
-        dest.writeString(mTitleKey);
-        dest.writeString(mArtist);
-        dest.writeString(mArtistKey);
-        dest.writeString(mAlbum);
-        dest.writeString(mAlbumKey);
-        dest.writeString(mAlbumArtist);
-        dest.writeString(mComposer);
-        dest.writeString(mPath);
-        dest.writeString(mDisplayName);
-        dest.writeString(mMimeType);
-        dest.writeInt(mId);
-        dest.writeInt(mSize);
-        dest.writeInt(mDateAdd);
-        dest.writeInt(mDuration);
-        dest.writeInt(mArtistId);
-        dest.writeInt(mAlbumId);
-        dest.writeInt(mTrack);
-        dest.writeInt(mYear);
-        dest.writeByte((byte) (mIsDrm ? 1 : 0));
-        dest.writeByte((byte) (mIsRingtone ? 1 : 0));
-        dest.writeByte((byte) (mIsMusic ? 1 : 0));
-        dest.writeByte((byte) (mIsAlarm ? 1 : 0));
-        dest.writeByte((byte) (mIsNotification ? 1 : 0));
-        dest.writeByte((byte) (mIsPodcast ? 1 : 0));
+        dest.writeLong(id);
+        dest.writeString(songName);
+        dest.writeString(albumName);
+        dest.writeInt(duration);
+        dest.writeLong(size);
+        dest.writeString(singerName);
+        dest.writeString(path);
     }
 
     @Override
@@ -141,103 +73,72 @@ public class MusicEntity implements Parcelable {
         }
     };
 
-    public String getTitle() {
-        return mTitle;
+    public long getId() {
+        return id;
     }
 
-    public String getTitleKey() {
-        return mTitleKey;
+    public String getSongName() {
+        return songName;
     }
 
-    public String getArtist() {
-        return mArtist;
-    }
-
-    public String getArtistKey() {
-        return mArtistKey;
-    }
-
-    public String getAlbum() {
-        return mAlbum;
-    }
-
-    public String getAlbumKey() {
-        return mAlbumKey;
-    }
-
-    public String getAlbumArtist() {
-        return mAlbumArtist;
-    }
-
-    public String getComposer() {
-        return mComposer;
-    }
-
-    public String getPath() {
-        return mPath;
-    }
-
-    public String getDisplayName() {
-        return mDisplayName;
-    }
-
-    public String getMimeType() {
-        return mMimeType;
-    }
-
-    public int getId() {
-        return mId;
-    }
-
-    public int getSize() {
-        return mSize;
-    }
-
-    public int getDateAdd() {
-        return mDateAdd;
+    public String getAlbumName() {
+        return albumName;
     }
 
     public int getDuration() {
-        return mDuration;
+        return duration;
     }
 
-    public int getArtistId() {
-        return mArtistId;
+    public long getSize() {
+        return size;
     }
 
-    public int getAlbumId() {
-        return mAlbumId;
+    public String getSingerName() {
+        return singerName;
     }
 
-    public int getTrack() {
-        return mTrack;
+    public String getPath() {
+        return path;
     }
 
-    public int getYear() {
-        return mYear;
+    public void setId(long id) {
+        this.id = id;
     }
 
-    public boolean isDrm() {
-        return mIsDrm;
+    public void setSongName(String songName) {
+        this.songName = songName;
     }
 
-    public boolean isRingtone() {
-        return mIsRingtone;
+    public void setAlbumName(String albumName) {
+        this.albumName = albumName;
     }
 
-    public boolean isMusic() {
-        return mIsMusic;
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 
-    public boolean isAlarm() {
-        return mIsAlarm;
+    public void setSize(long size) {
+        this.size = size;
     }
 
-    public boolean isNotification() {
-        return mIsNotification;
+    public void setSingerName(String singerName) {
+        this.singerName = singerName;
     }
 
-    public boolean isPodcast() {
-        return mIsPodcast;
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    @Override
+    public String toString() {
+        return "MusicEntity{" +
+                "id=" + id +
+                ", songName='" + songName + '\'' +
+                ", albumName='" + albumName + '\'' +
+                ", duration=" + duration +
+                ", size=" + size +
+                ", singerName='" + singerName + '\'' +
+                ", path='" + path + '\'' +
+                '}';
     }
 }

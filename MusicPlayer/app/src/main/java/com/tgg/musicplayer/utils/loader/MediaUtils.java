@@ -1,12 +1,10 @@
-package com.tgg.musicplayer.utils.media;
+package com.tgg.musicplayer.utils.loader;
 
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.MediaStore;
-
-import com.tgg.musicplayer.model.MusicEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,8 +18,8 @@ import java.util.List;
  */
 public class MediaUtils {
 
-    public static List<MusicEntity> getAudioList(Context context) {
-        List<MusicEntity> list = new ArrayList<MusicEntity>();
+    public static List<AudioEntity> getAudioList(Context context) {
+        List<AudioEntity> list = new ArrayList<AudioEntity>();
 
         ContentResolver contentResolver = context.getApplicationContext().getContentResolver();
         Cursor cursor = contentResolver.query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,null,null,null,MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
@@ -38,7 +36,7 @@ public class MediaUtils {
                         break;
                 }
             }
-            list.add(new MusicEntity(bundle));
+            list.add(new AudioEntity(bundle));
         }
         cursor.close();
         return list;

@@ -3,7 +3,6 @@
     package="com.tgg.musicplayer">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-
     <application
         android:name="com.tgg.musicplayer.app.MusicApplication"
         android:allowBackup="true"
@@ -59,7 +58,8 @@
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize|stateHidden"/>
 
-        <service android:name=".service.MediaService"/>
+        <service android:name=".service.MediaService">
+        </service>
     </application>
 
 </manifest>
