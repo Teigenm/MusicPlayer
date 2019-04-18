@@ -2,17 +2,14 @@ package com.tgg.musicplayer.app;
 
 
 
-import android.content.ServiceConnection;
-import android.telecom.ConnectionService;
-
-import com.tgg.musicplayer.model.MusicEntity;
 import com.tgg.musicplayer.service.MediaService;
+import com.tgg.musicplayer.storage.database.table.MusicEntity;
 
 import java.util.List;
 
 public class UserManager {
     private MediaService.MyBinder mMyBinder;
-    private ServiceConnection mServiceConnection;
+    private List<MusicEntity> mAllList;
     private static UserManager sUserManager;
 
     public static UserManager getInstance() {
@@ -33,19 +30,18 @@ public class UserManager {
         mMyBinder = myBinder;
     }
 
-    public UserManager(MediaService.MyBinder myBinder, ServiceConnection serviceConnection) {
+    public UserManager(MediaService.MyBinder myBinder, List<MusicEntity> list) {
         mMyBinder = myBinder;
-        mServiceConnection = serviceConnection;
+        mAllList = list;
     }
 
-    public ServiceConnection getServiceConnection() {
-        return mServiceConnection;
+    public List<MusicEntity> getAllList() {
+        return mAllList;
     }
 
-    public void setServiceConnection(ServiceConnection serviceConnection) {
-        mServiceConnection = serviceConnection;
+    public void setAllList(List<MusicEntity> allList) {
+        mAllList = allList;
     }
-
 
     public void setMyBinder(MediaService.MyBinder myBinder) {
         mMyBinder = myBinder;

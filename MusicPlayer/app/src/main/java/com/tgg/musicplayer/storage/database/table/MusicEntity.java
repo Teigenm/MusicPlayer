@@ -1,30 +1,59 @@
-package com.tgg.musicplayer.model;
+package com.tgg.musicplayer.storage.database.table;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.tgg.musicplayer.utils.Validator;
 import com.tgg.musicplayer.utils.loader.AudioEntity;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "music_info")
 public class MusicEntity implements Parcelable {
+
+    @PrimaryKey
+    @ColumnInfo(name = "id")
     private long id; // 编号
+
+    @ColumnInfo(name = "song_name")
     private String songName; // 乐曲名
+
+    @ColumnInfo(name = "album_name")
     private String albumName; // 专辑名
+
+    @ColumnInfo(name = "duration")
     private int duration; // 播放时长
+
+    @ColumnInfo(name = "size")
     private long size; // 文件大小
+
+    @ColumnInfo(name = "singer_name")
     private String singerName; // 演唱者
+
+    @ColumnInfo(name = "path")
     private String path; // 文件路径
 
     public MusicEntity() {}
 
+    @Ignore
     public MusicEntity(AudioEntity entity) {
         this.id = entity.getId();
         this.songName = entity.getTitle();
+        this.singerName = entity.getArtist();
         this.albumName = entity.getAlbum();
         this.duration = entity.getDuration();
         this.size = entity.getSize();
-        this.singerName = entity.getArtist();
         this.path = entity.getPath();
+        if(!Validator.isLetterDigitOrChinese(this.songName) || !Validator.isLetterDigitOrChinese(this.singerName)) {
+            this.songName = entity.getDisplayName().split("\\.")[0];
+            this.singerName = "";
+        }
     }
+
+    @Ignore
     public MusicEntity(long id, String songName, String albumName, int duration, long size, String singerName, String path) {
         this.id = id;
         this.songName = songName;
@@ -35,6 +64,7 @@ public class MusicEntity implements Parcelable {
         this.path = path;
     }
 
+    @Ignore
     protected MusicEntity(Parcel in) {
         id = in.readLong();
         songName = in.readString();

@@ -10,7 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="8">
+        android:layout_weight="80">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -19,48 +19,51 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="2"
-                android:orientation="horizontal"
-                android:scrollHorizontally="true"
-                android:gravity="center"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:singleLine="true"
-                android:ellipsize="marquee"
-                android:marqueeRepeatLimit="marquee_forever">
-                <TextView
-                    android:id="@+id/music_playing_song_name_text_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/number_one_song_name"
-                    android:textColor="@color/white"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="  -  "
-                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                    android:textColor="@color/gray_white" />
-
-                <TextView
-                    android:id="@+id/music_playing_singer_name_text_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/number_one_singer_name"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                    android:textColor="@color/gray_white"/>
+                android:layout_weight="23"
+                android:orientation="vertical"
+                android:gravity="center">
+                <RelativeLayout
+                    android:layout_width="256dp"
+                    android:layout_height="wrap_content">
+                    <com.tgg.musicplayer.widget.MarqueeText
+                        android:id="@+id/music_playing_song_name_text_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="@string/number_one_song_name"
+                        android:textColor="@color/white"
+                        android:textSize="20dp"
+                        style="@style/MarqueeTextStyle"/>
+                </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="128dp"
+                    android:layout_height="wrap_content">
+                    <com.tgg.musicplayer.widget.MarqueeText
+                        android:id="@+id/music_playing_singer_name_text_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="@string/number_one_singer_name"
+                        android:textColor="@color/gray_white"
+                        android:textSize="18sp"
+                        style="@style/MarqueeTextStyle"/>
+                </RelativeLayout>
             </LinearLayout>
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="7"
+                android:layout_weight="70"
                 android:padding="8dp">
                 <com.andremion.music.MusicCoverView
                     android:id="@+id/music_playing_cover_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerInside"
-                    android:src="@drawable/album_cover_soad"
+                    android:src="@mipmap/album_cover_01"
                     android:adjustViewBounds="true"
                     android:transitionName="@string/transition_name_cover"
                     app:shape="circle"/>
@@ -68,7 +71,7 @@
             <LinearLayout
                 android:layout_width="312dp"
                 android:layout_height="0dp"
-                android:layout_weight="3"
+                android:layout_weight="35"
                 android:layout_gravity="center"
                 android:orientation="vertical"
                 android:paddingTop="36dp">
@@ -106,7 +109,7 @@
         android:id="@+id/music_playing_bottom_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_weight="20"
         android:paddingTop="4dp">
         <LinearLayout
             android:layout_width="match_parent"
@@ -125,20 +128,22 @@
                     android:layout_height="36dp"
                     android:layout_marginEnd="24dp"
                     app:srcCompat="@drawable/ic_last_music"
-                    android:tint="@color/white"/>
+                    android:tint="@color/white"
+                    android:background="?android:attr/selectableItemBackground"/>
                 <ImageView
                     android:id="@+id/music_playing_control_music_image_view"
                     android:layout_width="64dp"
                     android:layout_height="64dp"
                     app:srcCompat="@drawable/ic_border_pause"
-                    android:tint="@color/white"/>
+                    android:tint="@color/white" />
                 <ImageView
                     android:id="@+id/music_playing_next_music_image_view"
                     android:layout_width="36dp"
                     android:layout_height="36dp"
                     app:srcCompat="@drawable/ic_next_music"
                     android:tint="@color/white"
-                    android:layout_marginStart="24dp"/>
+                    android:layout_marginStart="24dp"
+                    android:background="?android:attr/selectableItemBackground"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -169,7 +174,8 @@
                         android:layout_height="36dp"
                         android:padding="10dp"
                         app:srcCompat="@drawable/ic_three_bars_with_points"
-                        android:tint="@color/white" />
+                        android:tint="@color/white"
+                        android:background="?android:attr/selectableItemBackground"/>
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -196,7 +202,8 @@
                         android:layout_height="36dp"
                         android:padding="10dp"
                         app:srcCompat="@drawable/ic_two_down_arrow"
-                        android:tint="@color/white" />
+                        android:tint="@color/white"
+                        android:background="?android:attr/selectableItemBackground"/>
                 </RelativeLayout>
 
                 <RelativeLayout

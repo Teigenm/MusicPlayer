@@ -1,9 +1,10 @@
-package com.tgg.musicplayer.ui.song;
+package com.tgg.musicplayer.ui.play;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -14,12 +15,23 @@ import com.andremion.music.MusicCoverView;
 import com.tgg.musicplayer.R;
 import com.tgg.musicplayer.app.BaseActivity;
 import com.tgg.musicplayer.app.UserManager;
-import com.tgg.musicplayer.model.MusicEntity;
+import com.tgg.musicplayer.storage.database.AppDatabase;
+import com.tgg.musicplayer.storage.database.dao.ListInMusicDao;
+import com.tgg.musicplayer.storage.database.table.ListInMusicEntity;
+import com.tgg.musicplayer.storage.database.table.MusicEntity;
 import com.tgg.musicplayer.service.MediaService;
 import com.tgg.musicplayer.ui.view.SelectPlayListPopup;
 import com.tgg.musicplayer.ui.view.SelectSongOperationPopup;
+import com.tgg.musicplayer.utils.DateTimeUtils;
+import com.tgg.musicplayer.utils.Toaster;
 
-import java.text.SimpleDateFormat;
+import java.lang.ref.WeakReference;
+import java.util.List;
+
+import io.reactivex.Completable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 
 
 public class MusicPlayingActivity extends BaseActivity implements View.OnClickListener{
@@ -32,6 +44,7 @@ public class MusicPlayingActivity extends BaseActivity implements View.OnClickLi
     private MusicCoverView mMusicCoverView;
     private ImageView mLastMusicImageView;
     private ImageView mNextMusicImageView;
+    private ImageView mFavoriteMusicImageView;
     private ImageView mControlImageView;
     private TextView mNowSongTimeTextView;
     private TextView mTotalSongTimeTextView;
@@ -39,15 +52,15 @@ public class MusicPlayingActivity extends BaseActivity implements View.OnClickLi
     private TextView mSingerNameTextView;
     private SeekBar mSeekBar;
 
+    public static int sInitTitleFlag = 0;
+    private List<MusicEntity> mList;
     private MediaService.MyBinder mMyBinder;
-    private Handler mHandler = new Handler();
-    private SimpleDateFormat timeFormat = new SimpleDateFormat("m:ss");
+    private MyHandler mHandler ;
+    private int mFavoriteFlag;
 
-    private static MusicPlayingActivity sMusicPlayingActivity ;
+    private CompositeDisposable mDisposable;
+    private ListInMusicDao mListInMusicDao;
 
-    public static MusicPlayingActivity getInstance() {
-        return sMusicPlayingActivity;
-    }
     public static void go(Context context){
         Intent intent = new Intent();
         intent.setClass(context,MusicPlayingActivity.class);
@@ -58,18 +71,33 @@ public class MusicPlayingActivity extends BaseActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_playing_layout);
-        sMusicPlayingActivity = MusicPlayingActivity.this;
-        initView();
 
+        initView();
         init();
     }
 
     private void init() {
+        if(mHandler == null) {
+            mHandler = new MyHandler(MusicPlayingActivity.this);
+        }
+        mDisposable = new CompositeDisposable();
+        mListInMusicDao = AppDatabase.getInstance().getListInMusicDao();
         mMyBinder = UserManager.getInstance().getMyBinder();
-        if(mMyBinder.getMusicList().size()>0){
+        mList = mMyBinder.getMusicList();
+        if(mMyBinder.getPos()<0 || mMyBinder.getPos() >= mList.size()){
+            initNoMusic();
+        } else {
             initMusic();
             mHandler.post(mRunnable);
         }
+    }
+    private void initNoMusic () {
+        mSeekBar.setMax(0);
+        mTotalSongTimeTextView.setText(DateTimeUtils.getMinuteTimeInString(0));
+        mNowSongTimeTextView.setText(DateTimeUtils.getMinuteTimeInString(0));
+        mSongNameTextView.setText("梦想音乐随时为您点歌");
+        mSingerNameTextView.setText("");
+        mControlImageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_border_start,null));
     }
     private void initView() {
 
@@ -98,6 +126,8 @@ public class MusicPlayingActivity extends BaseActivity implements View.OnClickLi
         mControlImageView = findViewById(R.id.music_playing_control_music_image_view);
         mControlImageView.setOnClickListener(MusicPlayingActivity.this);
 
+        mFavoriteMusicImageView = findViewById(R.id.music_playing_favorite_song_image_view);
+        mFavoriteMusicImageView.setOnClickListener(MusicPlayingActivity.this);
 
         mMusicCoverView = findViewById(R.id.music_playing_cover_view);
         mMusicCoverView.setCallbacks(new MusicCoverView.Callbacks() {
@@ -110,7 +140,7 @@ public class MusicPlayingActivity extends BaseActivity implements View.OnClickLi
                 supportFinishAfterTransition();
             }
         });
-
+        //mMusicCoverView.start();
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -139,8 +169,12 @@ public class MusicPlayingActivity extends BaseActivity implements View.OnClickLi
                 finish();
                 break;
             case R.id.music_playing_song_operation_image_view:
-                SelectSongOperationPopup songOperationPopup = new SelectSongOperationPopup(this);
-                songOperationPopup.showPopup(mAllLayout);
+                if(mMyBinder.getPos()>=0 && mMyBinder.getPos() < mList.size()){
+                    SelectSongOperationPopup songOperationPopup = new SelectSongOperationPopup(this);
+                    songOperationPopup.showPopup(mAllLayout);
+                } else {
+                    Toaster.showToast("没有当前歌曲需要看的");
+                }
                 break;
             case R.id.music_playing_song_list_image_view:
                 SelectPlayListPopup playListPopup = new SelectPlayListPopup(this);
@@ -155,60 +189,114 @@ public class MusicPlayingActivity extends BaseActivity implements View.OnClickLi
             case R.id.music_playing_control_music_image_view:
                 controlMusic();
                 break;
+            case R.id.music_playing_favorite_song_image_view:
+                addMyFavorite();
+                break;
                 default:break;
         }
     }
     public void initMusic() {
-        MusicEntity entity = mMyBinder.getMusicEntity();
-        mSeekBar.setMax(entity.getDuration());
-        mTotalSongTimeTextView.setText(timeFormat.format(mMyBinder.getDuration()));
-        mSongNameTextView.setText(entity.getSongName());
-        mSingerNameTextView.setText(entity.getSingerName());
+        if(mMyBinder.getPos()<0 || mMyBinder.getPos() >= mList.size()){
+            return ;
+        }
+        if(sInitTitleFlag == 1) {
+            return ;
+        }
+        MusicEntity musicEntity = mMyBinder.getMusicEntity();
+        mSeekBar.setMax(musicEntity.getDuration());
+        mTotalSongTimeTextView.setText(DateTimeUtils.getMinuteTimeInString(mMyBinder.getDuration()));
+        mSongNameTextView.setText(musicEntity.getSongName());
+        mSingerNameTextView.setText(musicEntity.getSingerName());
         if(mMyBinder.isPlayingMusic()) {
             mControlImageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_border_pause,null));
         }else {
             mControlImageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_border_start,null));
         }
+        sInitTitleFlag = 1;
 
     }
     public void controlMusic() {
+        if(mMyBinder.getPos()<0 || mMyBinder.getPos() >= mList.size()){
+            return ;
+        }
         if(mMyBinder.isPlayingMusic()) {
             mMyBinder.pauseMusic();
-           // mMusicCoverView.stop();
             mControlImageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_border_start,null));
         } else {
             mMyBinder.playMusic();
-            //mMusicCoverView.start();
             mControlImageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_border_pause,null));
         }
     }
 
     public void nextMusic() {
         mMyBinder.nextMusic();
+        sInitTitleFlag = 0;
         initMusic();
     }
 
     public void lastMusic() {
         mMyBinder.lastMusic();
+        sInitTitleFlag = 0;
         initMusic();
-    }
-
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
-        mHandler.removeCallbacks(mRunnable);
     }
 
     private Runnable mRunnable = new Runnable() {
         @Override
         public void run() {
+
             initMusic();
             if(mMyBinder.getPlayPosition() >= mMyBinder.getDuration() - 1000) {
                 nextMusic();
             }
-            mNowSongTimeTextView.setText(timeFormat.format(mMyBinder.getPlayPosition()));
+            mNowSongTimeTextView.setText(DateTimeUtils.getMinuteTimeInString(mMyBinder.getPlayPosition()));
             mSeekBar.setProgress(mMyBinder.getPlayPosition());
             mHandler.postDelayed(mRunnable,1000);
         }
     };
+    static class MyHandler extends Handler {
+        private final WeakReference mActivty;
+
+        public MyHandler(MusicPlayingActivity activity){
+            mActivty =new WeakReference(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+        }
+    }
+    public void addMyFavorite() {
+        mFavoriteFlag = 0;
+        mDisposable.add(Completable.fromAction(() -> {
+            MusicEntity musicEntity = mMyBinder.getMusicEntity();
+            ListInMusicEntity listInMusicEntity = new ListInMusicEntity(2,musicEntity.getId());
+            if(mListInMusicDao.getListInMusic(listInMusicEntity.getSongListId() , listInMusicEntity.getSongListId() ) != null) {
+                mFavoriteFlag = 1;
+            } else {
+                mListInMusicDao.add(listInMusicEntity);
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    if(mFavoriteFlag == 1) {
+                        Toaster.showToast(getResources().getString(R.string.message_favorite_music_error));
+                    } else {
+                        Toaster.showToast(getResources().getString(R.string.message_favorite_music_success));
+                    }
+                }, throwable -> {
+
+                }));
+    }
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        sInitTitleFlag = 0;
+        if(mHandler != null){
+            mHandler.removeCallbacks(mRunnable);
+            mHandler.removeCallbacksAndMessages(null);
+            mHandler = null;
+        }
+        mDisposable.clear();
+    }
+
 }

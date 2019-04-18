@@ -20,9 +20,15 @@
     <string name="text_all_song">全部歌曲</string>
     <string name="text_my_favorite">我的收藏</string>
     <string name="text_recent_release">最近播放</string>
+    <string name="text_default_list">默认列表</string>
     <string name="text_search_music">搜索音乐</string>
-    <string name="text_song_list_description">收藏喜欢的歌单</string>
+    <string name="text_song_list_name">歌单名</string>
+    <string name="text_song_list_description">描述</string>
+
+    <string name="text_song_list_description_value">收藏喜欢的歌单</string>
     <string name="text_song_list_create_time">创建时间：2019-03-30</string>
+    <string name="text_song_list_edit_and_add_prompt">快写下你歌单的名字与描述信息吧</string>
+
 
     <string name="text_history_number">3次</string>
     <string name="text_history_play_time_most">播放次数最多的10首歌</string>
@@ -34,9 +40,13 @@
     <string name="text_song_detail">歌曲详情</string>
     <string name="text_delete">删除</string>
 
+    <string name="text_edit_song_list_information">编辑歌单信息</string>
+    <string name="text_delete_song_list">删除歌单</string>
+
     <string name="text_total_song_time">04:46</string>
     <string name="text_now_song_time">02:30</string>
 
+    <string name="zero">0</string>
     <string name="one">1</string>
     <string name="two">2</string>
     <string name="three">3</string>
@@ -57,4 +67,11 @@
     <string name="text_ok">确定</string>
     <string name="text_cancel">取消</string>
 
+    <string name="label_music_player_welcome">梦想音乐随时为您点歌</string>
+
+    <string name="message_favorite_music_success">收藏歌曲成功</string>
+    <string name="message_favorite_music_error">你已经收藏了该歌曲</string>
+    <string name="message_play_music_success">播放音乐成功</string>
+
+    <string name="error_load_date">加载数据失败</string>
 </resources>

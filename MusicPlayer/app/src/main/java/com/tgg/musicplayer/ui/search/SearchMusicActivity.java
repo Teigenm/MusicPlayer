@@ -1,4 +1,4 @@
-package com.tgg.musicplayer.ui.home;
+package com.tgg.musicplayer.ui.search;
 
 
 import android.content.Context;
@@ -10,16 +10,44 @@ import android.widget.ImageView;
 
 import com.tgg.musicplayer.R;
 import com.tgg.musicplayer.app.BaseActivity;
+import com.tgg.musicplayer.storage.database.AppDatabase;
+import com.tgg.musicplayer.storage.database.dao.ListInMusicDao;
+import com.tgg.musicplayer.storage.database.dao.MusicDao;
+import com.tgg.musicplayer.storage.database.dao.SongListDao;
+import com.tgg.musicplayer.storage.database.table.MusicEntity;
+import com.tgg.musicplayer.ui.play.PlayListAdapter;
+import com.tgg.musicplayer.utils.log.Logger;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import io.reactivex.Completable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class SearchMusicActivity extends BaseActivity implements View.OnClickListener{
 
     private SearchView mSearchView;
     private ImageView mBackImageView;
+    private RecyclerView mRecyclerView;
+    private PlayListAdapter mAdapter;
+
+    private List<MusicEntity> mList;
+
+    private CompositeDisposable mDisposable;
+    private AppDatabase mAppDatabase;
+    private ListInMusicDao mListInMusicDao;
+    private SongListDao mSongListDao;
+    private MusicDao mMusicDao;
+
     public static void go(Context context){
         Intent intent = new Intent();
         intent.setClass(context,SearchMusicActivity.class);
@@ -29,11 +57,28 @@ public class SearchMusicActivity extends BaseActivity implements View.OnClickLis
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_music_layout);
+
         initView();
+        initDate();
+    }
+    private void initDate() {
+        mDisposable = new CompositeDisposable();
+        mAppDatabase = AppDatabase.getInstance();
+        mListInMusicDao = mAppDatabase.getListInMusicDao();
+        mSongListDao = mAppDatabase.getSongListDao();
+        mMusicDao = mAppDatabase.getMusicDao();
     }
     private void initView() {
         mBackImageView = findViewById(R.id.search_music_back_image_view);
         mBackImageView.setOnClickListener(this);
+        mRecyclerView = findViewById(R.id.search_music_recycler_view);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(SearchMusicActivity.this));
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(SearchMusicActivity.this,DividerItemDecoration.HORIZONTAL));
+
+        mList = new ArrayList<>();
+        mAdapter = new PlayListAdapter(mList);
+        mRecyclerView.setAdapter(mAdapter);
 
         mSearchView = findViewById(R.id.search_music_search_view);
         if(mSearchView != null) {
@@ -57,6 +102,7 @@ public class SearchMusicActivity extends BaseActivity implements View.OnClickLis
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                searchMusic();
                 return false;
             }
 
@@ -65,6 +111,17 @@ public class SearchMusicActivity extends BaseActivity implements View.OnClickLis
                 return false;
             }
         });
+    }
+    public void searchMusic() {
+        mDisposable.add(Completable.fromAction(() -> {
+            String text ;
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    mAdapter.notifyDataSetChanged();
+                }, throwable -> {
+                    Logger.d(getResources().getString(R.string.error_load_date));
+                }));
     }
     @Override
     public void onClick(View v) {
@@ -76,5 +133,10 @@ public class SearchMusicActivity extends BaseActivity implements View.OnClickLis
             default:
                 break;
         }
+    }
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        mDisposable.clear();
     }
 }

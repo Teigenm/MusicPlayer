@@ -85,7 +85,7 @@
     <style name="horizontal_line_style">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1dp</item>
-        <item name="android:background">@color/gray</item>
+        <item name="android:background">@color/gray_white</item>
     </style>
 
     <style name="TextViewStyle" parent="Widget.AppCompat.TextView">
@@ -95,5 +95,13 @@
     <style name="AnimBottom" parent="@android:style/Animation">
         <item name="android:windowEnterAnimation">@anim/popup_alpha_out</item>
         <item name="android:windowExitAnimation">@anim/popup_alpha_in</item>
+    </style>
+    <style name="MarqueeTextStyle" parent="Widget.AppCompat.TextView">
+        <item name="android:singleLine">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:marqueeRepeatLimit">marquee_forever</item>
+        <item name="android:scrollHorizontally">true</item>
     </style>
 </resources>

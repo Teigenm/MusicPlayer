@@ -26,6 +26,8 @@
     <color name="red_a400">#81052B</color>
     <color name="red_a700">#FFe00032</color>
 
+    <color name="text_Grey">#c1c1c2</color>
+    <color name="colorWhite">#ffffff</color>
     <color name="gray_white">#FFCCCCCC</color>
     <color name="black_33">#333333</color>
     <color name="half_transparent_black">#BB000000</color>

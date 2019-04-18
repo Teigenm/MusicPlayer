@@ -3,17 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.tgg.musicplayer.ui.song.AllSongActivity">
     <item
-        android:id="@+id/menu_my_song_list_favorite"
+        android:id="@+id/menu_song_list_favorite"
         android:title=""
         app:showAsAction="always"
         android:icon="@drawable/ic_love" />
     <item
-        android:id="@+id/menu_my_song_list_note"
+        android:id="@+id/menu_song_list_note"
         android:title=""
         app:showAsAction="always"
         android:icon="@drawable/ic_pen" />
     <item
-        android:id="@+id/menu_my_song_list_search"
+        android:id="@+id/menu_song_list_search"
         android:title=""
         app:showAsAction="always"
         android:icon="@drawable/ic_toolbar_search" />

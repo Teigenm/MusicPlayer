@@ -7,7 +7,9 @@
     android:paddingBottom="8dp"
     android:paddingEnd="4dp"
     android:paddingStart="4dp"
-    android:background="@color/white">
+    android:background="@drawable/linerlayout_water_selector"
+    android:clickable="true"
+    android:focusable="true">
 
     <RelativeLayout
         android:id="@+id/item_song_simple_detail_number"
@@ -38,6 +40,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/number_one_singer_name"
+        android:textSize="13sp"
         app:layout_constraintStart_toStartOf="@id/item_song_simple_detail_song_name_text_view"
         app:layout_constraintTop_toBottomOf="@id/item_song_simple_detail_song_name_text_view"
         android:layout_marginTop="2dp"/>

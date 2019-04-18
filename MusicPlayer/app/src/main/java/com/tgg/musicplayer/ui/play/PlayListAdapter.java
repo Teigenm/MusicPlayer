@@ -1,16 +1,15 @@
-package com.tgg.musicplayer.ui.view;
+package com.tgg.musicplayer.ui.play;
 
 import android.widget.TextView;
 
 import com.tgg.musicplayer.R;
 import com.tgg.musicplayer.app.RecyclerAdapter;
 import com.tgg.musicplayer.app.RecyclerViewHolder;
-import com.tgg.musicplayer.model.MusicEntity;
+import com.tgg.musicplayer.storage.database.table.MusicEntity;
 
 import java.util.List;
 
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class PlayListAdapter extends RecyclerAdapter<MusicEntity> {
     /**
@@ -27,12 +26,12 @@ public class PlayListAdapter extends RecyclerAdapter<MusicEntity> {
         return R.layout.item_song_simple_detail_layout;
     }
 
+
     @Override
     protected void onBindViewHolder(RecyclerViewHolder holder, int position, MusicEntity item) {
         TextView id = holder.get(R.id.item_song_simple_detail_number_text_view);
         TextView songName = holder.get(R.id.item_song_simple_detail_song_name_text_view);
         TextView singerName = holder.get(R.id.item_song_simple_detail_singer_name_text_view);
-
         if(item != null) {
             id.setText((position+1)+"");
             songName.setText(item.getSongName());

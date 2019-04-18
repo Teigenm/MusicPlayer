@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/all_song_app_bar"
-        android:layout_height="312dp"
+        android:layout_height="308dp"
         android:layout_width="match_parent"
         style="@style/AppBarLayoutStyle"
         android:fitsSystemWindows="true">
@@ -16,57 +16,60 @@
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
             app:titleEnabled="false"
-            app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@mipmap/background_vertical_04"
+                android:src="@mipmap/album_cover_14"
+                android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
-                app:layout_collapseMode="parallax" />
+                app:layout_collapseMode="parallax"
+                />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="?actionBarSize">
+                <RelativeLayout
+                    android:id="@+id/all_song_title_image_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="42dp"
+                    android:background="@color/ghost_white"
+                    android:padding="4dp">
+                    <ImageView
+                        android:layout_width="108dp"
+                        android:layout_height="108dp"
+                        app:srcCompat="@mipmap/album_cover_14"
+                        android:adjustViewBounds="true"
+                        android:scaleType="centerCrop" />
+                </RelativeLayout>
+                <TextView
+                    android:id="@+id/all_song_title_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_all_song"
+                    android:textColor="@color/white"
+                    android:textSize="26sp"
+                    android:layout_marginTop="36dp"
+                    android:layout_marginStart="72dp"
+                    app:layout_constraintTop_toTopOf="@id/all_song_title_image_layout"
+                    app:layout_constraintStart_toEndOf="@id/all_song_title_image_layout"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/all_song_toolbar"
                 app:layout_collapseMode="pin"
-                style="@style/MyToolbarStyle" />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:fitsSystemWindows="true">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
+                style="@style/MyToolbarStyle" >
+                <TextView
+                    android:id="@+id/all_song_toolbar_text_view"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="?attr/actionBarSize">
-                    <RelativeLayout
-                        android:id="@+id/all_song_title_image_layout"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        android:layout_marginStart="24dp"
-                        android:layout_marginTop="96dp"
-                        android:background="@color/ghost_white"
-                        android:padding="4dp">
-                        <ImageView
-                            android:layout_width="108dp"
-                            android:layout_height="108dp"
-                            app:srcCompat="@mipmap/background_vertical_04"
-                            android:adjustViewBounds="true"
-                            android:scaleType="fitXY" />
-                    </RelativeLayout>
-                    <TextView
-                        android:id="@+id/all_song_title_text_view"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/text_all_song"
-                        android:textColor="@color/white"
-                        android:textSize="26sp"
-                        android:layout_marginTop="36dp"
-                        android:layout_marginStart="72dp"
-                        app:layout_constraintTop_toTopOf="@id/all_song_title_image_layout"
-                        app:layout_constraintStart_toEndOf="@id/all_song_title_image_layout"/>
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </LinearLayout>
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:text="@string/text_all_song"/>
+            </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 

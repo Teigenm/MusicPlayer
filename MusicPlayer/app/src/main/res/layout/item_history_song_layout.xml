@@ -3,20 +3,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="128dp"
-    android:padding="8dp">
+    android:padding="8dp"
+    android:background="@drawable/linerlayout_water_selector"
+    android:clickable="true"
+    android:focusable="true">
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:srcCompat="@mipmap/background_horizontal_04"
+        app:srcCompat="@mipmap/album_cover_11"
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"/>
     <TextView
         android:id="@+id/item_history_song_name_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="24sp"
+        android:textSize="20sp"
         android:text="@string/number_two_song_name"
         android:textColor="@color/white"
+        android:lines="1"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="36dp"
@@ -25,9 +29,10 @@
         android:id="@+id/item_history_singer_name_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:text="@string/number_two_singer_name"
         android:textColor="@color/white"
+        android:lines="1"
         android:layout_marginTop="4dp"
         app:layout_constraintTop_toBottomOf="@id/item_history_song_name_text_view"
         app:layout_constraintStart_toStartOf="@id/item_history_song_name_text_view"
@@ -41,12 +46,14 @@
         android:background="@color/red_700"
         android:gravity="center">
 
-        <TextView
-            android:id="@+id/item_history_recent_release_number__text_view"
+        <com.tgg.musicplayer.widget.MarqueeText
+            android:id="@+id/item_history_recent_release_times_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/text_history_number"
             android:textColor="@color/white"
+            android:gravity="center"
+            style="@style/MyToolbarStyle"
             android:textSize="12sp" />
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

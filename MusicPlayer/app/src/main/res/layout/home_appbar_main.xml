@@ -38,7 +38,7 @@
         android:layout_height="128dp"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
-        app:srcCompat="@mipmap/background_horizontal_06"
+        app:srcCompat="@mipmap/album_cover_13"
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"/>
 
@@ -58,18 +58,19 @@
             android:layout_marginStart="8dp"
             />
         <TextView
-            android:id="@+id/home_play_number_text_view"
+            android:id="@+id/home_history_most_play_number_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/text_play_number"
+            android:text="@string/zero"
             app:layout_constraintTop_toTopOf="@id/home_play_text_view"
             app:layout_constraintStart_toEndOf="@id/home_play_text_view"
             android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
             android:textColor="@color/red_700"
             android:fontFamily="cursive"
             android:textStyle="bold"
-            android:textSize="20sp"
-            android:layout_marginTop="2dp"
+            android:textSize="18sp"
+            android:layout_marginTop="4dp"
             />
         <TextView
             android:id="@+id/home_play_times_text_view"
@@ -78,7 +79,7 @@
             android:paddingTop="6dp"
             android:text="@string/text_play_times"
             app:layout_constraintTop_toTopOf="@id/home_play_text_view"
-            app:layout_constraintStart_toEndOf="@id/home_play_number_text_view"
+            app:layout_constraintStart_toEndOf="@id/home_history_most_play_number_text_view"
             android:layout_marginStart="4dp"
             />
         <TextView
@@ -93,10 +94,11 @@
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <TextView
+    <RelativeLayout
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        style="@style/horizontal_line_style" />
+        style="@style/horizontal_line_style">
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -123,13 +125,13 @@
                         android:id="@+id/home_item_all_song_image_view"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        app:srcCompat="@mipmap/background_vertical_01"
+                        app:srcCompat="@mipmap/album_cover_17"
                         android:adjustViewBounds="true"
                         android:scaleType="centerCrop"
                         />
                     <RelativeLayout
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
                         android:background="@drawable/ic_template"
                         android:backgroundTint="@color/gray"
                         android:gravity="center"
@@ -139,7 +141,7 @@
                             android:id="@+id/home_item_all_music_number_text_view"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/one"
+                            android:text="@string/zero"
                             android:textColor="@color/white"/>
                     </RelativeLayout>
 
@@ -175,13 +177,13 @@
                         android:id="@+id/home_item_recent_release_image_view"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        app:srcCompat="@mipmap/background_horizontal_03"
+                        app:srcCompat="@mipmap/album_cover_15"
                         android:adjustViewBounds="true"
                         android:scaleType="centerCrop"
                         />
                     <RelativeLayout
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
                         android:background="@drawable/ic_template"
                         android:backgroundTint="@color/gray"
                         android:gravity="center"
@@ -191,7 +193,7 @@
                             android:id="@+id/home_item_recent_release_text_view"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/two"
+                            android:text="@string/zero"
                             android:textColor="@color/white"/>
                     </RelativeLayout>
 
@@ -226,13 +228,13 @@
                         android:id="@+id/home_item_my_favorite_image_view"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        app:srcCompat="@mipmap/background_horizontal_01"
+                        app:srcCompat="@mipmap/album_cover_08"
                         android:adjustViewBounds="true"
                         android:scaleType="centerCrop"
                         />
                     <RelativeLayout
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
                         android:background="@drawable/ic_template"
                         android:backgroundTint="@color/gray"
                         android:gravity="center"
@@ -242,7 +244,7 @@
                             android:id="@+id/home_item_my_favorite_text_view"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/three"
+                            android:text="@string/zero"
                             android:textColor="@color/white"/>
                     </RelativeLayout>
 

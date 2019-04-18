@@ -18,6 +18,7 @@ public class DateTimeUtils {
 
     private static final SimpleDateFormat DEFAULT_DATE_TIME_FORMAT;
     private static final SimpleDateFormat DEFAULT_DATE_FORMAT;
+    private static final SimpleDateFormat TimeFormat_MINUTE;
 
     static {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -27,6 +28,7 @@ public class DateTimeUtils {
             DEFAULT_DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
             DEFAULT_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         }
+        TimeFormat_MINUTE = new SimpleDateFormat("m:ss");
     }
 
     private DateTimeUtils() {
@@ -70,5 +72,8 @@ public class DateTimeUtils {
      */
     public static String getCurrentTimeInString(SimpleDateFormat dateFormat) {
         return getTime(System.currentTimeMillis(), dateFormat);
+    }
+    public static String getMinuteTimeInString(long millis) {
+        return TimeFormat_MINUTE.format(millis);
     }
 }
