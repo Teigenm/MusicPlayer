@@ -77,7 +77,7 @@ public class AllSongActivity extends BaseActivity implements View.OnClickListene
     private void initView() {
         Toolbar toolbar = findViewById(R.id.all_song_toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setVisibility(View.INVISIBLE);
+
         Drawable drawable = toolbar.getNavigationIcon();
         if (drawable != null) {
             DrawableCompat.setTint(drawable, ResourcesCompat.getColor(getResources(), android.R.color.white, null));
@@ -156,7 +156,7 @@ public class AllSongActivity extends BaseActivity implements View.OnClickListene
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
-                    Toaster.showToast(getResources().getString(R.string.message_favorite_music_error));
+                    Toaster.showToast(getResources().getString(R.string.message_favorite_music_success));
                 }, throwable -> {
 
                 }));
@@ -166,6 +166,9 @@ public class AllSongActivity extends BaseActivity implements View.OnClickListene
         switch (item.getItemId()){
             case android.R.id.home:
                 finish();
+                break;
+            case R.id.menu_and_favorite:
+                favoriteMusic();
                 break;
             default:break;
         }
@@ -178,28 +181,31 @@ public class AllSongActivity extends BaseActivity implements View.OnClickListene
         return true;
     }
 
+    public void addToPlayList() {
+        mDisposable.add(Completable.fromAction(() -> {
+            ListInMusicEntity listInMusicEntity = new ListInMusicEntity();
+            listInMusicEntity.setSongListId(1);
+            mListInMusicDao.deleteByListId(1);
+            for(int i=0;i<mList.size();i++) {
+                MusicEntity musicEntity = mList.get(i);
+                listInMusicEntity.setMusicId(musicEntity.getId());
+                mListInMusicDao.add(listInMusicEntity);
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    HomeActivity.getInstance().initDate(1);
+                    Toaster.showToast(getResources().getString(R.string.message_play_music_success));
+                }, throwable -> {
+                    Toaster.showToast(getResources().getString(R.string.message_play_music_success));
+                }));
+    }
     @Override
     public void onClick(View v) {
         int id = v.getId();
         switch (id) {
             case R.id.all_song_fab:
-                mDisposable.add(Completable.fromAction(() -> {
-                    ListInMusicEntity listInMusicEntity = new ListInMusicEntity();
-                    listInMusicEntity.setSongListId(1);
-                    mListInMusicDao.deleteByListId(1);
-                    for(int i=0;i<mList.size();i++) {
-                        MusicEntity musicEntity = mList.get(i);
-                        listInMusicEntity.setMusicId(musicEntity.getId());
-                        mListInMusicDao.add(listInMusicEntity);
-                    }
-                }).subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(() -> {
-                            HomeActivity.getInstance().initDate(1);
-                            Toaster.showToast(getResources().getString(R.string.message_play_music_success));
-                        }, throwable -> {
-                            Toaster.showToast(getResources().getString(R.string.message_play_music_success));
-                        }));
+                addToPlayList();
                 break;
             default:
                 break;

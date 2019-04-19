@@ -159,7 +159,7 @@ public class RecentReleaseActivity extends BaseActivity implements View.OnClickL
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
-                    Toaster.showToast(getResources().getString(R.string.message_favorite_music_error));
+                    Toaster.showToast(getResources().getString(R.string.message_favorite_music_success));
                 }, throwable -> {
 
                 }));

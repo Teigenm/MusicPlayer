@@ -161,27 +161,30 @@ public class MyFavoriteActivity extends BaseActivity implements View.OnClickList
         return true;
     }
 
+    public void addToPlayList() {
+        mDisposable.add(Completable.fromAction(() -> {
+            ListInMusicEntity listInMusicEntity = new ListInMusicEntity();
+            listInMusicEntity.setSongListId(1);
+            mListInMusicDao.deleteByListId(1);
+            for(int i=0;i<mList.size();i++) {
+                MusicEntity musicEntity = mList.get(i);
+                listInMusicEntity.setMusicId(musicEntity.getId());
+                mListInMusicDao.add(listInMusicEntity);
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    Toaster.showToast(getResources().getString(R.string.message_play_music_success));
+                }, throwable -> {
+                    Toaster.showToast(getResources().getString(R.string.message_play_music_success));
+                }));
+    }
     @Override
     public void onClick(View v) {
         int id = v.getId();
         switch (id) {
             case R.id.my_favorite_fab:
-                mDisposable.add(Completable.fromAction(() -> {
-                    ListInMusicEntity listInMusicEntity = new ListInMusicEntity();
-                    listInMusicEntity.setSongListId(1);
-                    mListInMusicDao.deleteByListId(1);
-                    for(int i=0;i<mList.size();i++) {
-                        MusicEntity musicEntity = mList.get(i);
-                        listInMusicEntity.setMusicId(musicEntity.getId());
-                        mListInMusicDao.add(listInMusicEntity);
-                    }
-                }).subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(() -> {
-                            Toaster.showToast(getResources().getString(R.string.message_play_music_success));
-                        }, throwable -> {
-                            Toaster.showToast(getResources().getString(R.string.message_play_music_success));
-                        }));
+                addToPlayList();
                 break;
             default:
                 break;

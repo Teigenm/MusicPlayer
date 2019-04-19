@@ -7,7 +7,7 @@
     android:paddingBottom="2dp"
     android:paddingEnd="4dp"
     android:paddingStart="4dp"
-    android:background="@drawable/linerlayout_water_selector"
+    android:background="@drawable/liner_layout_water_selector"
     android:clickable="true"
     android:focusable="true">
 
@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:text="我的歌单"
         android:textSize="16sp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="14dp"
         android:textColor="@color/black"
         app:layout_constraintTop_toTopOf="@id/item_song_list_image_layout"
         app:layout_constraintStart_toEndOf="@id/item_song_list_image_layout"/>
@@ -46,7 +46,7 @@
         android:id="@+id/item_song_list_description_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="4dp"
         android:textSize="13sp"
         android:text="@string/text_favorite_song"
         app:layout_constraintTop_toBottomOf="@id/item_song_list_title_text_view"
@@ -55,7 +55,7 @@
         android:id="@+id/item_song_list_song_number_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="4dp"
         android:text="@string/text_favorite_song_number"
         android:textSize="13sp"
         app:layout_constraintTop_toBottomOf="@id/item_song_list_description_text_view"

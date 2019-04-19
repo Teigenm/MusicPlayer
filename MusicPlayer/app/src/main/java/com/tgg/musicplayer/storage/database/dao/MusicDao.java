@@ -17,7 +17,7 @@ import io.reactivex.Flowable;
 
 @Dao
 public interface MusicDao {
-    @Query("SELECT * FROM music_info LIMIT 80")
+    @Query("SELECT * FROM music_info")
     List<MusicEntity>  getAll();
 
     @Query("SELECT * FROM music_info WHERE id IN (:musicIds)")

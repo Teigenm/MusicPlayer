@@ -97,7 +97,7 @@ public class SelectPlayListPopup implements View.OnClickListener,RecyclerViewTou
         myBinder.setPos(position);
         myBinder.initMediaPlayer();
         myBinder.playMusic();
-        HomeActivity.getInstance().initDate(1);
+        HomeActivity.getInstance().initDate(0);
     }
 
     @Override

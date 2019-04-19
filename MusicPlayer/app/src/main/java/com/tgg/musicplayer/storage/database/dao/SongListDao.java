@@ -31,6 +31,9 @@ public interface SongListDao {
     @Query("SELECT * FROM song_list_info WHERE id != 1 AND id != 2")
     List<SongListEntity> getAllSongList();
 
+    @Query("DELETE FROM song_list_info WHERE id = :listId")
+    void deleteById(long listId);
+
     @Insert
     void add(SongListEntity entity);
 

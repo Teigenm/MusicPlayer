@@ -7,7 +7,7 @@
     android:paddingBottom="8dp"
     android:paddingEnd="4dp"
     android:paddingStart="4dp"
-    android:background="@drawable/linerlayout_water_selector"
+    android:background="@drawable/liner_layout_water_selector"
     android:clickable="true"
     android:focusable="true">
 

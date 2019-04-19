@@ -56,6 +56,9 @@ public class DateTimeUtils {
         return getTime(millis, DEFAULT_DATE_TIME_FORMAT);
     }
 
+    public static String getDate(long millis) {
+        return getTime(millis, DEFAULT_DATE_FORMAT);
+    }
     /**
      * get current time in milliseconds, format is {@link #DEFAULT_DATE_TIME_FORMAT}
      *

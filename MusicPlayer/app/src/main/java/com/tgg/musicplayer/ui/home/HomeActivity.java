@@ -156,7 +156,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         if(ContextCompat.checkSelfPermission(HomeActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(HomeActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
         }else{
-            initDate(0);
+            initDate(1);
         }
     }
 
@@ -178,7 +178,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
     }
 
-    public void initDate(int fromUser) {
+    public void initDate(int active) {
 
         mDisposable.add(Completable.fromAction(() -> {
             mCount = mSongListDao.countSongList();
@@ -213,7 +213,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
                     Logger.d(mCount);
                     if(UserManager.getInstance().getMyBinder() == null) {
                         initService();
-                    } else if(mCount > 0 && fromUser == 0) {
+                    } else if(mCount > 0 && active == 1) {
                         if(mMusicList.size() > 0) {
                             mMyBinder.setMusicList(mMusicList);
                             mMyBinder.setPos(0);
@@ -490,7 +490,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
     @Override
     public void onItemClick(View view, int position) {
-        SongListActivity.go(HomeActivity.this);
+        SongListActivity.go(HomeActivity.this,mSongListEntityList.get(position).getId() );
     }
 
     @Override

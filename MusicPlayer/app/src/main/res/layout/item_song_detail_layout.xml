@@ -7,7 +7,7 @@
     android:paddingBottom="8dp"
     android:paddingEnd="4dp"
     android:paddingStart="4dp"
-    android:background="@drawable/linerlayout_water_selector"
+    android:background="@drawable/liner_layout_water_selector"
     android:clickable="true"
     android:focusable="true"
     android:orientation="horizontal">
@@ -107,7 +107,7 @@
             android:layout_height="20dp"
             app:srcCompat="@drawable/ic_menu_point"
             android:tint="@color/gray"
-            android:background="@drawable/linerlayout_water_selector"
+            android:background="@drawable/liner_layout_water_selector"
             />
     </RelativeLayout>
     <RelativeLayout

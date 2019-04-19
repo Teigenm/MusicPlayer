@@ -36,7 +36,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     android:layout_marginStart="24dp"
-                    android:layout_marginTop="42dp"
+                    android:layout_marginTop="48dp"
                     android:background="@color/ghost_white"
                     android:padding="4dp">
                     <ImageView
@@ -67,12 +67,13 @@
                     app:layout_constraintTop_toBottomOf="@id/song_list_title_text_view"
                     app:layout_constraintStart_toStartOf="@id/song_list_title_text_view"/>
                 <TextView
-                    android:id="@+id/my_song_list_create_time_text_view"
+                    android:id="@+id/song_list_create_time_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/text_song_list_create_time"
                     android:textColor="@color/tab_text_color"
                     android:layout_marginTop="4dp"
+                    android:lines="1"
                     app:layout_constraintTop_toBottomOf="@id/song_list_description_text_view"
                     app:layout_constraintStart_toStartOf="@id/song_list_description_text_view"/>
 

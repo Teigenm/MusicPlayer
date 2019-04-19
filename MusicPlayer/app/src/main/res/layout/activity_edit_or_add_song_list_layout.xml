@@ -23,8 +23,7 @@
                     android:id="@+id/edit_and_add_list_name_text_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/gray"
-                    android:textSize="16dp"/>
+                    android:textSize="16sp"/>
             </com.google.android.material.textfield.TextInputLayout>
             <TextView
                 android:id="@+id/edit_and_add_list_name_number_words_text_view"
@@ -48,8 +47,7 @@
                     android:id="@+id/edit_and_add_description_text_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="16dp"
-                    android:textColor="@color/gray"/>
+                    android:textSize="16sp" />
             </com.google.android.material.textfield.TextInputLayout>
             <TextView
                 android:id="@+id/edit_and_add_description_number_words_text_view"

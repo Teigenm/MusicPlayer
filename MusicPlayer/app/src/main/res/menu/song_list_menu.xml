@@ -8,7 +8,7 @@
         app:showAsAction="always"
         android:icon="@drawable/ic_love" />
     <item
-        android:id="@+id/menu_song_list_note"
+        android:id="@+id/menu_song_list_description"
         android:title=""
         app:showAsAction="always"
         android:icon="@drawable/ic_pen" />

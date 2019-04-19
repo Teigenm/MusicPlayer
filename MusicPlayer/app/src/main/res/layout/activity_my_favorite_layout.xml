@@ -36,7 +36,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     android:layout_marginStart="24dp"
-                    android:layout_marginTop="42dp"
+                    android:layout_marginTop="48dp"
                     android:background="@color/ghost_white"
                     android:padding="4dp">
                     <ImageView
