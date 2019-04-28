@@ -48,11 +48,11 @@ import io.reactivex.schedulers.Schedulers;
   *
   * @Author:         tgg
   * @CreateDate:     2019/4/20 20:57
-  * @Description:    sListId -1 最近播放 0全部歌曲 1播放列表 2我的收藏
+  * @Description:
   * @Version:        1.0
  */
 
-public class SelectSongOperationPopup implements View.OnClickListener {
+public class SelectSearchOperationPopup implements View.OnClickListener {
     public PopupWindow mPopupWindow;
     private SelectSongOperationPopupOnClickListener selectSongOperationPopupOnClickListener;
     private LinearLayout mAddPlayListLayout;
@@ -67,7 +67,6 @@ public class SelectSongOperationPopup implements View.OnClickListener {
 
     private MediaService.MyBinder mBinder;
     private Context mContext;
-    private static long sListId;
     private static MusicEntity sMusicEntity;
 
     private CompositeDisposable mDisposable;
@@ -75,32 +74,25 @@ public class SelectSongOperationPopup implements View.OnClickListener {
     private ListInMusicDao mListInMusicDao;
     private SongListDao mSongListDao;
     private MusicDao mMusicDao;
-    private RecentMusicDao mRecentMusicDao;
 
-    private AlertDialog mAlertDialog;
     private AlertDialog mListDialog;
 
     private List<MusicEntity> mMusicList;
     private List<SongListEntity> mSongListEntityList;
     private int mAddPlayListFlag = 0;
-    private int mNowAddListFlag = 0;
     private List<String> mTitleList;
     private int mIsCheckedPos;
-    private long mNowPlayMusicId;
 
     @SuppressWarnings("deprecation")
-    public SelectSongOperationPopup(Context context, long listId, MusicEntity musicEntity) {
+    public SelectSearchOperationPopup(Context context, MusicEntity musicEntity) {
         mContext = context;
-        sListId = listId;
         sMusicEntity = musicEntity;
 
-        mBinder = UserManager.getInstance().getMyBinder();
         mDisposable = new CompositeDisposable();
         mAppDatabase = AppDatabase.getInstance();
         mListInMusicDao = mAppDatabase.getListInMusicDao();
         mSongListDao = mAppDatabase.getSongListDao();
         mMusicDao = mAppDatabase.getMusicDao();
-        mRecentMusicDao = mAppDatabase.getRecentMusicDao();
 
         mPopupWindow = new PopupWindow(context);
         mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
@@ -120,13 +112,6 @@ public class SelectSongOperationPopup implements View.OnClickListener {
                 return true;
             }
         });
-        mAlertDialog = DialogFactory.createAlertDialog(mContext,mContext.getResources().getString(R.string.message_confirm_delete_song), new DialogInterface.OnClickListener(){
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                deleteSong();
-                HomeActivity.sInitTitleFlag = 0;
-            }
-        });
         getSongList();
     }
 
@@ -134,22 +119,18 @@ public class SelectSongOperationPopup implements View.OnClickListener {
         View view = LayoutInflater.from(mContext).inflate(R.layout.select_song_operation_pop_window, null);
         mAddPlayListLayout = view.findViewById(R.id.song_operation_add_play_list_layout);
         mAddPlayListLayout.setOnClickListener(this);
-        if(sListId == 1) {
-            mAddPlayListLayout.setVisibility(View.GONE);
-        }
 
         mSongDetailLayout = view.findViewById(R.id.song_operation_song_detail_layout);
         mSongDetailLayout.setOnClickListener(this);
 
         mDeleteSongLayout = view.findViewById(R.id.song_operation_delete_song_layout);
-        mDeleteSongLayout.setOnClickListener(this);
+        mDeleteSongLayout.setVisibility(View.GONE);
 
         mSongNameTextView = view.findViewById(R.id.song_operation_song_name_text_view);
         mSingerNameTextView = view.findViewById(R.id.song_operation_singer_name_text_view);
+        mSingerNameTextView.setVisibility(View.GONE);
 
         mSongNameTextView.setText(sMusicEntity.getSongName());
-        mSingerNameTextView.setText(sMusicEntity.getSingerName());
-
 
         return view;
     }
@@ -161,7 +142,6 @@ public class SelectSongOperationPopup implements View.OnClickListener {
                 mListDialog = DialogFactory.createOptionMenuDialog(mContext, mTitleList, (parent, view, position, id) -> {
                     String item = (String) parent.getAdapter().getItem(position);
                     mIsCheckedPos = position+1;
-                    Logger.d(item);
                     mListDialog.dismiss();
                     addPlayList(mIsCheckedPos);
                 });
@@ -170,13 +150,34 @@ public class SelectSongOperationPopup implements View.OnClickListener {
             case R.id.song_operation_song_detail_layout:
                 Toaster.showToast("该功能未开放");
                 break;
-            case R.id.song_operation_delete_song_layout:
-                mAlertDialog.show();
-                break;
             default:
                 break;
         }
 
+    }
+    private void addPlayList (int isCheckedListId) {
+        mAddPlayListFlag = 0;
+        mDisposable.add(Completable.fromAction(() -> {
+            if(mListInMusicDao.getListInMusic(isCheckedListId,sMusicEntity.getId()) == null) {
+                mListInMusicDao.add(new ListInMusicEntity(isCheckedListId,sMusicEntity.getId() ) );
+                mAddPlayListFlag = 1;
+                mMusicList = mMusicDao.getMusicsByListId(1);
+            } else {
+                mAddPlayListFlag = 0;
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    if(mAddPlayListFlag == 1) {
+                        Toaster.showToast(mContext.getResources().getString(R.string.message_add_list_success));
+                        UserManager.getInstance().getMyBinder().setMusicList(mMusicList);
+                    } else {
+                        Toaster.showToast(mContext.getResources().getString(R.string.message_add_list_fail));
+                    }
+                    dismiss();
+                }, throwable -> {
+                    Toaster.showToast(mContext.getResources().getString(R.string.error_progress));
+                }));
     }
     private void getSongList () {
         mDisposable.add(Completable.fromAction(() -> {
@@ -192,86 +193,6 @@ public class SelectSongOperationPopup implements View.OnClickListener {
                     Toaster.showToast(mContext.getResources().getString(R.string.error_progress));
                 }));
     }
-    private void addPlayList (int isCheckedListId) {
-        mAddPlayListFlag = 0;
-        mDisposable.add(Completable.fromAction(() -> {
-            if(mListInMusicDao.getListInMusic(isCheckedListId,sMusicEntity.getId()) == null) {
-                mListInMusicDao.add(new ListInMusicEntity(isCheckedListId,sMusicEntity.getId() ) );
-                mAddPlayListFlag = 1;
-                mMusicList = mMusicDao.getMusicsByListId(1);
-            } else {
-                mAddPlayListFlag = 0;
-            }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(() -> {
-                    Logger.d(mAddPlayListFlag);
-                    if(mAddPlayListFlag == 1) {
-                        Toaster.showToast(mContext.getResources().getString(R.string.message_add_list_success));
-                        UserManager.getInstance().getMyBinder().setMusicList(mMusicList);
-                    } else {
-                        Toaster.showToast(mContext.getResources().getString(R.string.message_add_list_fail));
-                    }
-                    dismiss();
-                }, throwable -> {
-                    Toaster.showToast(mContext.getResources().getString(R.string.error_progress));
-                }));
-    }
-
-    public void deleteSong () {
-        mDisposable.add(Completable.fromAction(() -> {
-            mNowAddListFlag = 0;
-            mNowPlayMusicId = mBinder.getMusicEntity().getId();
-            if(sListId == -1) {
-                mRecentMusicDao.deleteById(sMusicEntity.getId() );
-            } if(sListId == 0) {
-                mRecentMusicDao.deleteById(sMusicEntity.getId());
-                mListInMusicDao.deleteByMusicId(sMusicEntity.getId());
-                mMusicDao.deleteById(sMusicEntity.getId() );
-            } else {
-                mListInMusicDao.deleteByIds(sListId,sMusicEntity.getId());
-            }
-            if(sListId == 1) {
-                mMusicList = mMusicDao.getMusicsByListId(1);
-                mNowAddListFlag = 1;
-            } else if(sListId == UserManager.getInstance().getIsPlayListId()){
-                mListInMusicDao.deleteByIds(1,sMusicEntity.getId());
-                mMusicList = mMusicDao.getMusicsByListId(1);
-                mNowAddListFlag = 1;
-            }
-            if(mMusicList == null) {
-                mMusicList = new ArrayList<>();
-                mBinder.pauseMusic();
-            }
-            Logger.d(sListId);
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(() -> {
-                    Toaster.showToast(mContext.getResources().getString(R.string.message_delete_music_success));
-                    if(mNowAddListFlag == 1) {
-                        mBinder.setMusicList(mMusicList);
-                    }
-                    if(sMusicEntity.getId() == mNowPlayMusicId && mBinder.getListSize() != 0) {
-                        mBinder.nextMusic();
-                    }
-                    if(sListId == -1) {
-                        RecentReleaseActivity.getInstance().initDate();
-                    } else if(sListId == 0) {
-                        AllSongActivity.getInstance().initDate();
-                    } else if(sListId == 1) {
-                        MusicPlayingActivity.sInitTitleFlag = 0;
-                    } else if(sListId == 2) {
-                        MyFavoriteActivity.getInstance().initDate();
-                    } else {
-                        SongListActivity.getInstance().initDate();
-                    }
-                    HomeActivity.sInitTitleFlag = 0;
-                    dismiss();
-                }, throwable -> {
-                    Toaster.showToast(mContext.getResources().getString(R.string.error_progress));
-                }));
-    }
-
     public interface SelectSongOperationPopupOnClickListener {
         void obtainMessage(int flag, String ret);
     }

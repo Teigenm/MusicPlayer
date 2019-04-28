@@ -1,6 +1,5 @@
 package com.tgg.musicplayer.storage.database.dao;
 
-import com.tgg.musicplayer.storage.database.table.ListInMusicEntity;
 import com.tgg.musicplayer.storage.database.table.RecentMusicEntity;
 
 import java.util.List;
@@ -29,8 +28,8 @@ public interface RecentMusicDao {
     @Query("SELECT COUNT(*) FROM recent_music_info")
     int getAllCount();
 
-    @Query("SELECT MAX(play_times) FROM recent_music_info")
-    int getMaxTimes();
+    @Query("SELECT * FROM recent_music_info ORDER BY play_times DESC LIMIT 1")
+    RecentMusicEntity getMaxTimesRecentEntity();
 
     @Query("SELECT * FROM recent_music_info")
     List<RecentMusicEntity> getAll();
@@ -49,4 +48,7 @@ public interface RecentMusicDao {
 
     @Delete
     void delete(RecentMusicEntity entity);
+
+    @Query("DELETE FROM recent_music_info WHERE music_id = :musicId")
+    void deleteById(long musicId);
 }

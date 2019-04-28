@@ -21,6 +21,9 @@ public class MusicEntity implements Parcelable {
     @ColumnInfo(name = "song_name")
     private String songName; // 乐曲名
 
+    @ColumnInfo(name = "singer_name")
+    private String singerName; // 演唱者
+
     @ColumnInfo(name = "album_name")
     private String albumName; // 专辑名
 
@@ -30,13 +33,15 @@ public class MusicEntity implements Parcelable {
     @ColumnInfo(name = "size")
     private long size; // 文件大小
 
-    @ColumnInfo(name = "singer_name")
-    private String singerName; // 演唱者
-
     @ColumnInfo(name = "path")
     private String path; // 文件路径
 
-    public MusicEntity() {}
+    @Ignore
+    private boolean isPlaying;
+
+    public MusicEntity() {
+        this.isPlaying = false;
+    }
 
     @Ignore
     public MusicEntity(AudioEntity entity) {
@@ -47,6 +52,7 @@ public class MusicEntity implements Parcelable {
         this.duration = entity.getDuration();
         this.size = entity.getSize();
         this.path = entity.getPath();
+        this.isPlaying = false;
         if(!Validator.isLetterDigitOrChinese(this.songName) || !Validator.isLetterDigitOrChinese(this.singerName)) {
             this.songName = entity.getDisplayName().split("\\.")[0];
             this.singerName = "";
@@ -57,33 +63,35 @@ public class MusicEntity implements Parcelable {
     public MusicEntity(long id, String songName, String albumName, int duration, long size, String singerName, String path) {
         this.id = id;
         this.songName = songName;
+        this.singerName = singerName;
         this.albumName = albumName;
         this.duration = duration;
         this.size = size;
-        this.singerName = singerName;
         this.path = path;
+        this.isPlaying = false;
     }
 
-    @Ignore
     protected MusicEntity(Parcel in) {
         id = in.readLong();
         songName = in.readString();
+        singerName = in.readString();
         albumName = in.readString();
         duration = in.readInt();
         size = in.readLong();
-        singerName = in.readString();
         path = in.readString();
+        isPlaying = in.readByte() != 0;
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(id);
         dest.writeString(songName);
+        dest.writeString(singerName);
         dest.writeString(albumName);
         dest.writeInt(duration);
         dest.writeLong(size);
-        dest.writeString(singerName);
         dest.writeString(path);
+        dest.writeByte((byte) (isPlaying ? 1 : 0));
     }
 
     @Override
@@ -159,16 +167,25 @@ public class MusicEntity implements Parcelable {
         this.path = path;
     }
 
+    public boolean getIsPlaying() {
+        return isPlaying;
+    }
+
+    public void setIsPlaying(boolean isPlaying) {
+        this.isPlaying = isPlaying;
+    }
+
     @Override
     public String toString() {
         return "MusicEntity{" +
                 "id=" + id +
                 ", songName='" + songName + '\'' +
+                ", singerName='" + singerName + '\'' +
                 ", albumName='" + albumName + '\'' +
                 ", duration=" + duration +
                 ", size=" + size +
-                ", singerName='" + singerName + '\'' +
                 ", path='" + path + '\'' +
+                ", isPlaying=" + isPlaying +
                 '}';
     }
 }

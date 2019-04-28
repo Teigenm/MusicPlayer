@@ -6,16 +6,21 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.tgg.musicplayer.R;
 import com.tgg.musicplayer.app.BaseActivity;
+import com.tgg.musicplayer.app.RecyclerViewTouchListener;
 import com.tgg.musicplayer.storage.database.AppDatabase;
 import com.tgg.musicplayer.storage.database.dao.ListInMusicDao;
 import com.tgg.musicplayer.storage.database.dao.MusicDao;
 import com.tgg.musicplayer.storage.database.dao.SongListDao;
 import com.tgg.musicplayer.storage.database.table.MusicEntity;
-import com.tgg.musicplayer.ui.play.PlayListAdapter;
+import com.tgg.musicplayer.ui.view.SelectSearchOperationPopup;
+import com.tgg.musicplayer.ui.view.SelectSongOperationPopup;
 import com.tgg.musicplayer.utils.log.Logger;
 
 import java.lang.reflect.Field;
@@ -33,26 +38,34 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class SearchMusicActivity extends BaseActivity implements View.OnClickListener{
+public class SearchMusicActivity extends BaseActivity implements View.OnClickListener,RecyclerViewTouchListener.OnItemClickListener, RecyclerViewTouchListener.OnItemLongClickListener{
 
     private SearchView mSearchView;
     private ImageView mBackImageView;
     private RecyclerView mRecyclerView;
-    private PlayListAdapter mAdapter;
-
-    private List<MusicEntity> mList;
+    private SearchMusicAdapter mAdapter;
+    private TextView mNowListNameTextView;
+    private TextView mResultTextView;
+    private RelativeLayout mAllLayout;
 
     private CompositeDisposable mDisposable;
     private AppDatabase mAppDatabase;
     private ListInMusicDao mListInMusicDao;
     private SongListDao mSongListDao;
     private MusicDao mMusicDao;
+    private static List<MusicEntity> mAllList;
+    private List<MusicEntity> mMusicList;
+    private String mSearchText = "";
+    private static String mNowListName = "";
 
-    public static void go(Context context){
+    public static void go(Context context,List<MusicEntity> allList,String nowListName) {
         Intent intent = new Intent();
         intent.setClass(context,SearchMusicActivity.class);
         context.startActivity(intent);
+        mAllList = allList;
+        mNowListName = nowListName;
     }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,17 +80,29 @@ public class SearchMusicActivity extends BaseActivity implements View.OnClickLis
         mListInMusicDao = mAppDatabase.getListInMusicDao();
         mSongListDao = mAppDatabase.getSongListDao();
         mMusicDao = mAppDatabase.getMusicDao();
+
+        mNowListNameTextView.setText(mNowListName);
+        String tempString = getResources().getString(R.string.replace_follow_some_music_search);
+        tempString = tempString.replace("*", String.valueOf(mAllList.size() ) );
+        mResultTextView.setText(tempString);
     }
     private void initView() {
+
+        mAllLayout = findViewById(R.id.search_music_all_layout);
+        mNowListNameTextView = findViewById(R.id.search_music_now_list_name_text_view);
+        mResultTextView = findViewById(R.id.search_music_result_text_view);
+
         mBackImageView = findViewById(R.id.search_music_back_image_view);
         mBackImageView.setOnClickListener(this);
+
         mRecyclerView = findViewById(R.id.search_music_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(SearchMusicActivity.this));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addItemDecoration(new DividerItemDecoration(SearchMusicActivity.this,DividerItemDecoration.HORIZONTAL));
+        mRecyclerView.addOnItemTouchListener(new RecyclerViewTouchListener(this,this,this));
 
-        mList = new ArrayList<>();
-        mAdapter = new PlayListAdapter(mList);
+        mMusicList = new ArrayList<>();
+        mAdapter = new SearchMusicAdapter(mMusicList);
         mRecyclerView.setAdapter(mAdapter);
 
         mSearchView = findViewById(R.id.search_music_search_view);
@@ -97,13 +122,14 @@ public class SearchMusicActivity extends BaseActivity implements View.OnClickLis
         }
         mSearchView.onActionViewExpanded();
         mSearchView.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
-        mSearchView.setFocusable(false);
         mSearchView.setQueryHint(getResources().getString(R.string.text_search_music));
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                hintKeyBoard();
                 searchMusic();
-                return false;
+                mSearchView.clearFocus();
+                return true;
             }
 
             @Override
@@ -112,13 +138,39 @@ public class SearchMusicActivity extends BaseActivity implements View.OnClickLis
             }
         });
     }
+    public void hintKeyBoard() {
+        //拿到InputMethodManager
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        //如果window上view获取焦点 && view不为空
+        if (imm.isActive() && getCurrentFocus() != null) {
+            //拿到view的token 不为空
+            if (getCurrentFocus().getWindowToken() != null) {
+                //表示软键盘窗口总是隐藏，除非开始时以SHOW_FORCED显示。
+                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            }
+        }
+    }
     public void searchMusic() {
+        mSearchText = mSearchView.getQuery().toString();
+        if(mSearchText == null || "".equals(mSearchText) ) {
+            return ;
+        }
         mDisposable.add(Completable.fromAction(() -> {
-            String text ;
+            mMusicList.clear();
+            for(int i=0;i < mAllList.size();i++) {
+                MusicEntity entity = mAllList.get(i);
+                if( entity.getSingerName().contains(mSearchText) || entity.getSongName().contains(mSearchText)
+                        || entity.getAlbumName().contains(mSearchText) ) {
+                    mMusicList.add(entity);
+                }
+            }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
                     mAdapter.notifyDataSetChanged();
+                    String tempString = getResources().getString(R.string.replace_search_music_result);
+                    tempString = tempString.replace("*", String.valueOf(mMusicList.size() ) );
+                    mResultTextView.setText(tempString);
                 }, throwable -> {
                     Logger.d(getResources().getString(R.string.error_load_date));
                 }));
@@ -138,5 +190,17 @@ public class SearchMusicActivity extends BaseActivity implements View.OnClickLis
     public void onDestroy(){
         super.onDestroy();
         mDisposable.clear();
+    }
+
+    @Override
+    public void onItemClick(View view, int position) {
+        SelectSearchOperationPopup songOperationPopup = new SelectSearchOperationPopup(this,mMusicList.get(position) );
+        songOperationPopup.showPopup(mAllLayout);
+    }
+
+    @Override
+    public void onItemLongClick(View view, int position) {
+        SelectSearchOperationPopup songOperationPopup = new SelectSearchOperationPopup(this,mMusicList.get(position) );
+        songOperationPopup.showPopup(mAllLayout);
     }
 }

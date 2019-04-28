@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">梦想音乐</string>
+    <string name="app_name">唐国根</string>
 
     <string name="text_navigation_drawer_open">Open navigation drawer</string>
     <string name="text_navigation_drawer_close">Close navigation drawer</string>
@@ -8,6 +8,7 @@
     <string name="nav_header_title">梦想为帆·Android</string>
 
     <string name="text_history_play">历史最多播放</string>
+    <string name="text_play_list">播放列表</string>
     <string name="text_play">播放</string>
     <string name="text_play_times">次</string>
     <string name="text_play_number">2</string>
@@ -20,10 +21,11 @@
     <string name="text_all_song">全部歌曲</string>
     <string name="text_my_favorite">我的收藏</string>
     <string name="text_recent_release">最近播放</string>
-    <string name="text_default_list">默认列表</string>
     <string name="text_search_music">搜索音乐</string>
     <string name="text_song_list_name">歌单名</string>
     <string name="text_song_list_description">描述</string>
+    <string name="text_artist">艺术家：</string>
+    <string name="text_album">专辑：</string>
 
     <string name="text_song_list_description_value">收藏喜欢的歌单</string>
     <string name="text_song_list_create_time">创建时间：2019-03-30</string>
@@ -36,7 +38,7 @@
     <string name="text_search_all_song">从4首歌曲中检索</string>
 
     <string name="text_song">歌曲：</string>
-    <string name="text_add_to_playing_list">添加至播放列表</string>
+    <string name="text_add_to_list">添加至列表</string>
     <string name="text_song_detail">歌曲详情</string>
     <string name="text_delete">删除</string>
 
@@ -69,9 +71,32 @@
 
     <string name="label_music_player_welcome">梦想音乐随时为您点歌</string>
 
+    <!--消息-->
     <string name="message_favorite_music_success">收藏歌曲成功</string>
-    <string name="message_favorite_music_error">你已经收藏了该歌曲</string>
+    <string name="message_favorite_music_fail">你已经收藏了该歌曲</string>
     <string name="message_play_music_success">播放音乐成功</string>
-
+    <string name="message_confirm_favorite_song_list"> 你确定要收藏整个歌单吗？</string>
+    <string name="message_confirm_delete_song_list"> 你确定要删除该歌单吗？</string>
+    <string name="message_delete_song_list_success"> 删除歌单成功 </string>
+    <string name="message_confirm_delete_song"> 你确定要删除该歌曲吗？</string>
+    <string name="message_no_music_to_look">没有当前歌曲需要看的</string>
+    <string name="message_delete_music_success">删除歌曲成功</string>
+    <string name="message_add_list_success">添加至列表成功</string>
+    <string name="message_add_list_fail">列表有这首歌了</string>
+    <string name="message_press_again_finish">再按一次退出程序</string>
+    <string name="message_no_music_and_go_add_music">列表没有歌曲，去添点歌吧</string>
+    <!--错误信息-->
+    <string name="error_progress">程序出错啦</string>
     <string name="error_load_date">加载数据失败</string>
+    <string name="error_get_permission_and_finish">无法获得权限,程序将退出！</string>
+
+    <!--替换字符串-->
+    <string name="replace_follow_some_music_search">从 * 首歌曲中检索</string>
+    <string name="replace_search_music_result">一共检索出 * 首歌曲</string>
+    <string name="replace_random_play_some_music">随机播放 * 首歌曲</string>
+    <string name="replace_create_song_list">创建的歌单(*)</string>
+
+    <!--播放格式-->
+    <string name="play_mode_cycle">循环播放</string>
+    <string name="play_mode_random">随机播放</string>
 </resources>

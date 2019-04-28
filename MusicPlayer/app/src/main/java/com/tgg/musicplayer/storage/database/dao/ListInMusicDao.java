@@ -9,7 +9,6 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
-import io.reactivex.Flowable;
 
 @Dao
 public interface ListInMusicDao {
@@ -37,4 +36,10 @@ public interface ListInMusicDao {
 
     @Query("DELETE FROM list_in_music_info WHERE song_list_id = :listId")
     void deleteByListId(long listId);
+
+    @Query("DELETE FROM list_in_music_info WHERE song_list_id = :listId and music_id = :musicId")
+    void deleteByIds(long listId,long musicId);
+
+    @Query("DELETE FROM list_in_music_info WHERE song_list_id = :musicId")
+    void deleteByMusicId(long musicId);
 }

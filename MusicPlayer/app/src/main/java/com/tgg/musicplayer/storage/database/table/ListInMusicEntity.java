@@ -2,9 +2,7 @@ package com.tgg.musicplayer.storage.database.table;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
-import androidx.room.ForeignKey;
 import androidx.room.Ignore;
-import androidx.room.PrimaryKey;
 
 /**
   *
@@ -23,13 +21,33 @@ public class ListInMusicEntity {
     @ColumnInfo(name = "music_id")
     private long musicId;
 
+    @ColumnInfo(name = "add_time")
+    private long addTime;
+
     public ListInMusicEntity() {
+        this.addTime = System.currentTimeMillis();
     }
 
     @Ignore
     public ListInMusicEntity(long songListId , long musicId) {
         this.musicId = musicId;
         this.songListId = songListId;
+        this.addTime = System.currentTimeMillis();
+    }
+
+    @Ignore
+    public ListInMusicEntity(long songListId, long musicId, long addTime) {
+        this.songListId = songListId;
+        this.musicId = musicId;
+        this.addTime = addTime;
+    }
+
+    public long getAddTime() {
+        return addTime;
+    }
+
+    public void setAddTime(long addTime) {
+        this.addTime = addTime;
     }
 
     public long getMusicId() {
@@ -48,4 +66,12 @@ public class ListInMusicEntity {
         this.songListId = songListId;
     }
 
+
+    @Override
+    public String toString() {
+        return "ListInMusicEntity{" +
+                "songListId=" + songListId +
+                ", musicId=" + musicId +
+                '}';
+    }
 }

@@ -1,17 +1,11 @@
 package com.tgg.musicplayer.ui.splash;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
-import android.widget.Toast;
 
 import com.tgg.musicplayer.app.BaseActivity;
 import com.tgg.musicplayer.ui.home.HomeActivity;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 /**
  * Class description:

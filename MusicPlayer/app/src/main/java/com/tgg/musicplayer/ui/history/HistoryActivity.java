@@ -79,17 +79,11 @@ public class HistoryActivity extends BaseActivity {
 
         mDisposable.add(Completable.fromAction(() -> {
             mList.addAll(mRecentMusicDao.getMostTimes());
-            List<Long> longList = new ArrayList<>();
-            for(int i=0;i<mList.size();i++) {
-                longList.add(mList.get(i).getMusicId());
-            }
-            List<MusicEntity> musicList = mMusicDao.getMusicsByIds(longList);
             for(int i=0;i<mList.size();i++) {
                 RecentMusicEntity recentMusicEntity = mList.get(i);
-                MusicEntity musicEntity = musicList.get(i);
+                MusicEntity musicEntity = mMusicDao.getMusicById(recentMusicEntity.getMusicId() );
                 recentMusicEntity.setSongName(musicEntity.getSongName());
                 recentMusicEntity.setSingerName(musicEntity.getSingerName());
-                mList.set(i,recentMusicEntity);
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

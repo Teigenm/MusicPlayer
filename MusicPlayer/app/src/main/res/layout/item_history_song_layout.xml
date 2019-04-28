@@ -48,12 +48,11 @@
 
         <com.tgg.musicplayer.widget.MarqueeText
             android:id="@+id/item_history_recent_release_times_text_view"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/text_history_number"
             android:textColor="@color/white"
             android:gravity="center"
-            style="@style/MyToolbarStyle"
+            style="@style/MarqueeTextStyle"
             android:textSize="12sp" />
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

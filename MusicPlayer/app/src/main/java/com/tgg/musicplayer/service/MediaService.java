@@ -7,14 +7,14 @@ import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
 
+import com.tgg.musicplayer.app.UserManager;
 import com.tgg.musicplayer.storage.database.AppDatabase;
-import com.tgg.musicplayer.storage.database.dao.ListInMusicDao;
 import com.tgg.musicplayer.storage.database.dao.RecentMusicDao;
-import com.tgg.musicplayer.storage.database.table.ListInMusicEntity;
 import com.tgg.musicplayer.storage.database.table.MusicEntity;
 import com.tgg.musicplayer.storage.database.table.RecentMusicEntity;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.Nullable;
@@ -22,6 +22,13 @@ import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
+/**
+  *
+  * @Author:         tgg
+  * @CreateDate:     2019/4/20 21:27
+  * @Description:     mPlayMod 0 顺序播放 1 随机播放
+  * @Version:        1.0
+ */
 
 public class MediaService extends Service {
 
@@ -29,6 +36,8 @@ public class MediaService extends Service {
     private MediaPlayer mMediaPlayer = null;
     private List<MusicEntity> mMusicList;
     private int mPos ;
+    private int mPlayMode = 0;
+    private int mPreciousPos = -1;
 
     private CompositeDisposable mDisposable;
     private RecentMusicDao mRecentMusicDao;
@@ -40,6 +49,9 @@ public class MediaService extends Service {
         mDisposable = new CompositeDisposable();
         mRecentMusicDao = AppDatabase.getInstance().getRecentMusicDao();
         mPlayFlag = 0;
+        mPlayMode = 0;
+        mPreciousPos = -1;
+        mMusicList = new ArrayList<>();
         //Logger.d("创建");
     }
 
@@ -75,6 +87,8 @@ public class MediaService extends Service {
             if(mPos<0 || mPos >= mMusicList.size()) {
                 return ;
             }
+            changeListPlayState(mPreciousPos,false);
+            changeListPlayState(mPos,true);
             try {
                 mMediaPlayer.reset();
                 mMediaPlayer.setDataSource(mMusicList.get(mPos).getPath());
@@ -87,7 +101,7 @@ public class MediaService extends Service {
         }
         public void playMusic() {
             mMediaPlayer.start();
-            if(mPlayFlag == 1) {
+            if(mPlayFlag == 1 ) {
                 return ;
             }
             mPlayFlag = 1;
@@ -119,20 +133,43 @@ public class MediaService extends Service {
             return mMediaPlayer.isPlaying();
         }
         public void nextMusic() {
+            mPreciousPos = mPos;
+            if(mPlayMode == 0){
+                mPos = (mPos +1) % mMusicList.size();
+            } else {
+                mPos = randomMusic();
+            }
+            if(mPos < 0) {
+                mPos = 0;
+            }
             if (mMediaPlayer == null || mPos < 0 || mPos >= mMusicList.size()) {
                 return ;
             }
-            mPos = (mPos +1) % mMusicList.size();
             initMediaPlayer();
             playMusic();
         }
-        public void lastMusic() {
-            if (mMediaPlayer == null || mPos < 0 || mPos >= mMusicList.size()) {
+        public void changeListPlayState(int pos,boolean state) {
+            if(pos < 0 || pos >= mMusicList.size() ) {
                 return ;
             }
-            mPos--;
-            if (mPos == -1) {
+            MusicEntity entity = mMusicList.get(pos);
+            entity.setIsPlaying(state);
+        }
+        public void preciousMusic() {
+            mPreciousPos = mPos;
+            if(mPlayMode == 0){
+                mPos--;
+                if (mPos < 0) {
+                    mPos = mMusicList.size()-1;
+                }
+            } else {
+                mPos = randomMusic();
+            }
+            if(mPos >= mMusicList.size()) {
                 mPos = mMusicList.size()-1;
+            }
+            if (mMediaPlayer == null || mPos < 0 || mPos >= mMusicList.size()) {
+                return ;
             }
             initMediaPlayer();
             playMusic();
@@ -163,7 +200,11 @@ public class MediaService extends Service {
         }
 
         public void setMusicList (List<MusicEntity> list) {
+            mPreciousPos = -1;
             mMusicList = list;
+            for(int i = 0;i<mMusicList.size();i++) {
+                mMusicList.get(i).setIsPlaying(false);
+            }
         }
 
         public List<MusicEntity> getMusicList() {
@@ -171,6 +212,7 @@ public class MediaService extends Service {
         }
 
         public void setPos(int pos) {
+            mPreciousPos = mPos;
             mPos = pos;
         }
 
@@ -184,6 +226,32 @@ public class MediaService extends Service {
 
         public int getListSize() {
             return mMusicList.size();
+        }
+
+        public void setPlayMode(int playMode) {
+            mPlayMode = playMode;
+        }
+
+        public int getPlayMode() {
+            return mPlayMode;
+        }
+
+        public void setPreciousPos(int preciousPos) {
+            mPreciousPos = preciousPos;
+        }
+
+        public int getPreciousPos() {
+            return mPreciousPos;
+        }
+        public int randomMusic() {
+            if(mMusicList.size() == 1) {
+                return 0 ;
+            }
+            int num = (int) (Math.random()*mMusicList.size());
+            if(num == mPos) {
+                num = randomMusic();
+            }
+            return num ;
         }
     }
 

@@ -15,7 +15,7 @@
         <SeekBar
             android:id="@+id/home_seek_bar"
             android:layout_width="match_parent"
-            android:layout_height="16dp"
+            android:layout_height="12dp"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
             android:thumb="@null"

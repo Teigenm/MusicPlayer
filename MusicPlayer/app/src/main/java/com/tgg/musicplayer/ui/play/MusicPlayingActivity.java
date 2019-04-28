@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.andremion.music.MusicCoverView;
 import com.tgg.musicplayer.R;
@@ -20,13 +21,15 @@ import com.tgg.musicplayer.storage.database.dao.ListInMusicDao;
 import com.tgg.musicplayer.storage.database.table.ListInMusicEntity;
 import com.tgg.musicplayer.storage.database.table.MusicEntity;
 import com.tgg.musicplayer.service.MediaService;
+import com.tgg.musicplayer.storage.sharedpreference.MusicSettingPreference;
+import com.tgg.musicplayer.storage.sharedpreference.SharedPreferenceManager;
+import com.tgg.musicplayer.ui.home.HomeActivity;
 import com.tgg.musicplayer.ui.view.SelectPlayListPopup;
 import com.tgg.musicplayer.ui.view.SelectSongOperationPopup;
 import com.tgg.musicplayer.utils.DateTimeUtils;
 import com.tgg.musicplayer.utils.Toaster;
 
 import java.lang.ref.WeakReference;
-import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -36,7 +39,6 @@ import io.reactivex.schedulers.Schedulers;
 
 public class MusicPlayingActivity extends BaseActivity implements View.OnClickListener{
 
-    private static final String TAG = MusicPlayingActivity.class.getSimpleName();
     private ImageView mPlayingFinishImageView;
     private ImageView mPlayingSongOperationImageView;
     private LinearLayout mAllLayout;
@@ -50,17 +52,29 @@ public class MusicPlayingActivity extends BaseActivity implements View.OnClickLi
     private TextView mTotalSongTimeTextView;
     private TextView mSongNameTextView;
     private TextView mSingerNameTextView;
+    private ImageView mPlayModeImageView;
     private SeekBar mSeekBar;
+    private SelectPlayListPopup mPlayListPopup;
+
 
     public static int sInitTitleFlag = 0;
-    private List<MusicEntity> mList;
     private MediaService.MyBinder mMyBinder;
     private MyHandler mHandler ;
     private int mFavoriteFlag;
 
     private CompositeDisposable mDisposable;
     private ListInMusicDao mListInMusicDao;
+    private SharedPreferenceManager mManager = SharedPreferenceManager.getInstance();
+    private MusicSettingPreference mSettingEntity = new MusicSettingPreference();
 
+    private static MusicPlayingActivity sMusicPlayingActivity;
+    private static Object sObject = new Object();
+
+    public static MusicPlayingActivity getInstance() {
+        synchronized (sObject) {
+            return sMusicPlayingActivity;
+        }
+    }
     public static void go(Context context){
         Intent intent = new Intent();
         intent.setClass(context,MusicPlayingActivity.class);
@@ -71,6 +85,7 @@ public class MusicPlayingActivity extends BaseActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_playing_layout);
+        sMusicPlayingActivity = this;
 
         initView();
         init();
@@ -83,8 +98,14 @@ public class MusicPlayingActivity extends BaseActivity implements View.OnClickLi
         mDisposable = new CompositeDisposable();
         mListInMusicDao = AppDatabase.getInstance().getListInMusicDao();
         mMyBinder = UserManager.getInstance().getMyBinder();
-        mList = mMyBinder.getMusicList();
-        if(mMyBinder.getPos()<0 || mMyBinder.getPos() >= mList.size()){
+
+        if(mMyBinder.getPlayMode() == 1) {
+            mPlayModeImageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_random_play));
+        } else {
+            mPlayModeImageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_cycle_play));
+        }
+
+        if(mMyBinder.getPos()<0 || mMyBinder.getPos() >= mMyBinder.getListSize()){
             initNoMusic();
         } else {
             initMusic();
@@ -95,7 +116,7 @@ public class MusicPlayingActivity extends BaseActivity implements View.OnClickLi
         mSeekBar.setMax(0);
         mTotalSongTimeTextView.setText(DateTimeUtils.getMinuteTimeInString(0));
         mNowSongTimeTextView.setText(DateTimeUtils.getMinuteTimeInString(0));
-        mSongNameTextView.setText("梦想音乐随时为您点歌");
+        mSongNameTextView.setText(getResources().getString(R.string.label_music_player_welcome));
         mSingerNameTextView.setText("");
         mControlImageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_border_start,null));
     }
@@ -128,6 +149,9 @@ public class MusicPlayingActivity extends BaseActivity implements View.OnClickLi
 
         mFavoriteMusicImageView = findViewById(R.id.music_playing_favorite_song_image_view);
         mFavoriteMusicImageView.setOnClickListener(MusicPlayingActivity.this);
+
+        mPlayModeImageView = findViewById(R.id.music_playing_play_mode_image_view);
+        mPlayModeImageView.setOnClickListener(MusicPlayingActivity.this);
 
         mMusicCoverView = findViewById(R.id.music_playing_cover_view);
         mMusicCoverView.setCallbacks(new MusicCoverView.Callbacks() {
@@ -169,16 +193,16 @@ public class MusicPlayingActivity extends BaseActivity implements View.OnClickLi
                 finish();
                 break;
             case R.id.music_playing_song_operation_image_view:
-                if(mMyBinder.getPos()>=0 && mMyBinder.getPos() < mList.size()){
-                    SelectSongOperationPopup songOperationPopup = new SelectSongOperationPopup(this);
+                if(mMyBinder.getPos()>=0 && mMyBinder.getPos() < mMyBinder.getListSize()){
+                    SelectSongOperationPopup songOperationPopup = new SelectSongOperationPopup(this,1,mMyBinder.getMusicEntity() );
                     songOperationPopup.showPopup(mAllLayout);
                 } else {
-                    Toaster.showToast("没有当前歌曲需要看的");
+                    Toaster.showToast(getResources().getString(R.string.message_no_music_to_look) );
                 }
                 break;
             case R.id.music_playing_song_list_image_view:
-                SelectPlayListPopup playListPopup = new SelectPlayListPopup(this);
-                playListPopup.showPopup(mAllLayout);
+                mPlayListPopup = new SelectPlayListPopup(this);
+                mPlayListPopup.showPopup(mAllLayout);
                 break;
             case R.id.music_playing_last_music_image_view:
                 lastMusic();
@@ -192,11 +216,25 @@ public class MusicPlayingActivity extends BaseActivity implements View.OnClickLi
             case R.id.music_playing_favorite_song_image_view:
                 addMyFavorite();
                 break;
+            case R.id.music_playing_play_mode_image_view:
+                changePlayMode();
+                break;
                 default:break;
         }
     }
+    public void changePlayMode() {
+        if(mMyBinder.getPlayMode() == 0) {
+            mMyBinder.setPlayMode(1);
+            mPlayModeImageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_random_play));
+            Toast.makeText(getApplication(),getResources().getString(R.string.play_mode_random),Toast.LENGTH_SHORT).show();
+        } else {
+            mPlayModeImageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_cycle_play));
+            mMyBinder.setPlayMode(0);
+            Toast.makeText(getApplication(),getResources().getString(R.string.play_mode_cycle),Toast.LENGTH_SHORT).show();
+        }
+    }
     public void initMusic() {
-        if(mMyBinder.getPos()<0 || mMyBinder.getPos() >= mList.size()){
+        if(mMyBinder.getPos()<0 || mMyBinder.getPos() >= mMyBinder.getListSize()){
             return ;
         }
         if(sInitTitleFlag == 1) {
@@ -216,7 +254,7 @@ public class MusicPlayingActivity extends BaseActivity implements View.OnClickLi
 
     }
     public void controlMusic() {
-        if(mMyBinder.getPos()<0 || mMyBinder.getPos() >= mList.size()){
+        if(mMyBinder.getPos()<0 || mMyBinder.getPos() >= mMyBinder.getListSize()){
             return ;
         }
         if(mMyBinder.isPlayingMusic()) {
@@ -231,12 +269,20 @@ public class MusicPlayingActivity extends BaseActivity implements View.OnClickLi
     public void nextMusic() {
         mMyBinder.nextMusic();
         sInitTitleFlag = 0;
+        if(mPlayListPopup !=null && mPlayListPopup.getPopupWindow() != null && mPlayListPopup.getPopupWindow().isShowing()) {
+            mPlayListPopup.changeListItem(mMyBinder.getPreciousPos());
+            mPlayListPopup.changeListItem(mMyBinder.getPos());
+        }
         initMusic();
     }
 
     public void lastMusic() {
-        mMyBinder.lastMusic();
+        mMyBinder.preciousMusic();
         sInitTitleFlag = 0;
+        if(mPlayListPopup !=null && mPlayListPopup.getPopupWindow() != null && mPlayListPopup.getPopupWindow().isShowing()) {
+            mPlayListPopup.changeListItem(mMyBinder.getPreciousPos());
+            mPlayListPopup.changeListItem(mMyBinder.getPos());
+        }
         initMusic();
     }
 
@@ -270,7 +316,7 @@ public class MusicPlayingActivity extends BaseActivity implements View.OnClickLi
         mDisposable.add(Completable.fromAction(() -> {
             MusicEntity musicEntity = mMyBinder.getMusicEntity();
             ListInMusicEntity listInMusicEntity = new ListInMusicEntity(2,musicEntity.getId());
-            if(mListInMusicDao.getListInMusic(listInMusicEntity.getSongListId() , listInMusicEntity.getSongListId() ) != null) {
+            if(mListInMusicDao.getListInMusic(listInMusicEntity.getSongListId() ,listInMusicEntity.getMusicId() ) != null) {
                 mFavoriteFlag = 1;
             } else {
                 mListInMusicDao.add(listInMusicEntity);
@@ -279,7 +325,7 @@ public class MusicPlayingActivity extends BaseActivity implements View.OnClickLi
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
                     if(mFavoriteFlag == 1) {
-                        Toaster.showToast(getResources().getString(R.string.message_favorite_music_error));
+                        Toaster.showToast(getResources().getString(R.string.message_favorite_music_fail));
                     } else {
                         Toaster.showToast(getResources().getString(R.string.message_favorite_music_success));
                     }
@@ -297,6 +343,8 @@ public class MusicPlayingActivity extends BaseActivity implements View.OnClickLi
             mHandler = null;
         }
         mDisposable.clear();
+        HomeActivity.sInitTitleFlag = 0;
+        HomeActivity.getInstance().initMusic();
     }
 
 }

@@ -3,7 +3,6 @@ package com.tgg.musicplayer.utils.loader;
 import android.content.Context;
 
 import com.tgg.musicplayer.storage.database.table.MusicEntity;
-import com.tgg.musicplayer.utils.log.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;

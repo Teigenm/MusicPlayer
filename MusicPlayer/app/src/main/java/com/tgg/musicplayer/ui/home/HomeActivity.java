@@ -31,7 +31,10 @@ import com.tgg.musicplayer.storage.database.dao.RecentMusicDao;
 import com.tgg.musicplayer.storage.database.dao.SongListDao;
 import com.tgg.musicplayer.storage.database.table.MusicEntity;
 import com.tgg.musicplayer.service.MediaService;
+import com.tgg.musicplayer.storage.database.table.RecentMusicEntity;
 import com.tgg.musicplayer.storage.database.table.SongListEntity;
+import com.tgg.musicplayer.storage.sharedpreference.MusicSettingPreference;
+import com.tgg.musicplayer.storage.sharedpreference.SharedPreferenceManager;
 import com.tgg.musicplayer.ui.history.HistoryActivity;
 import com.tgg.musicplayer.ui.search.SearchMusicActivity;
 import com.tgg.musicplayer.ui.song.AllSongActivity;
@@ -91,6 +94,8 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     private TextView mCreatedSongListTextView;
     private TextView mNewSongListTextView;
     private ImageView mRightArrowImageView;
+    private TextView mHistorySongNameTextView;
+    private SelectPlayListPopup mPlayListPopup;
 
     private CompositeDisposable mDisposable;
     private AppDatabase mAppDatabase;
@@ -98,7 +103,10 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     private SongListDao mSongListDao;
     private MusicDao mMusicDao;
     private RecentMusicDao mRecentMusicDao;
+    private SharedPreferenceManager mManager = SharedPreferenceManager.getInstance();
+    private MusicSettingPreference mSettingEntity = new MusicSettingPreference();
 
+    private List<MusicEntity> mAllList;
     private List<MusicEntity> mMusicList;
     private List<SongListEntity> mSongListEntityList;
     private MediaService.MyBinder mMyBinder;
@@ -106,14 +114,19 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     private int mCount;
     private int mRecentReleaseNum = 0;
     private int mMyFavoriteNum = 0;
-    private int mHistoryMostPlayNum = 0;
+    private RecentMusicEntity mHistoryMostRecentEntity;
     private int mAllSongNum = 0;
+    private MusicEntity mHistoryMostMusicEntity;
+
 
     public static int sInitTitleFlag = 0;
     private static HomeActivity sHomeActivity;
+    private static Object mLock = new Object();
 
     public static HomeActivity getInstance() {
-        return sHomeActivity;
+        synchronized (mLock) {
+            return sHomeActivity;
+        }
     }
 
     private ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -121,10 +134,19 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         public void onServiceConnected(ComponentName name, IBinder service) {
             mMyBinder = (MediaService.MyBinder) service;
             UserManager.getInstance().setMyBinder(mMyBinder);
-            UserManager.getInstance().setAllList(MusicLoader.getMusicList(HomeActivity.this));
             mMyBinder.setMusicList(mMusicList);
-            if(mMusicList.size() > 0) {
+            boolean success = mManager.load(HomeActivity.this, mSettingEntity);
+            Logger.d(mSettingEntity);
+            if(success && mCount > 0) {
+                mMyBinder.setPlayMode(mSettingEntity.getPlayMode());
+                UserManager.getInstance().setIsPlayListId(mSettingEntity.getIsPlayListId());
+                mMyBinder.setPos(mSettingEntity.getPosition());
+            } else {
+                UserManager.getInstance().setIsPlayListId(-2);
+                mMyBinder.setPlayMode(0);
                 mMyBinder.setPos(0);
+            }
+            if(mMyBinder.getPos() >= 0 && mMyBinder.getPos() < mMyBinder.getListSize()) {
                 mMyBinder.initMediaPlayer();
             } else {
                 mMyBinder.setPos(-1);
@@ -156,7 +178,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         if(ContextCompat.checkSelfPermission(HomeActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(HomeActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
         }else{
-            initDate(1);
+            initDate();
         }
     }
 
@@ -167,6 +189,8 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         mSongListDao = mAppDatabase.getSongListDao();
         mMusicDao = mAppDatabase.getMusicDao();
         mRecentMusicDao = mAppDatabase.getRecentMusicDao();
+
+        sInitTitleFlag = 0;
     }
     private void initService() {
         if(mHandler == null) {
@@ -178,55 +202,57 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
     }
 
-    public void initDate(int active) {
+    public void initDate() {
 
         mDisposable.add(Completable.fromAction(() -> {
             mCount = mSongListDao.countSongList();
-            List<MusicEntity> allList = MusicLoader.getMusicList(HomeActivity.this);
             if(mCount == 0) {
-                SongListEntity songListEntity = new SongListEntity(getResources().getString(R.string.text_default_list),System.currentTimeMillis(),"");
+                mAllList = MusicLoader.getMusicList(HomeActivity.this);
+                SongListEntity songListEntity = new SongListEntity(getResources().getString(R.string.text_play_list),System.currentTimeMillis(),"");
                 mSongListDao.add(songListEntity);
                 songListEntity = new SongListEntity(getResources().getString(R.string.text_my_favorite),System.currentTimeMillis(),"");
                 mSongListDao.add(songListEntity);
                 songListEntity = new SongListEntity(getResources().getString(R.string.text_my_song_list),System.currentTimeMillis(),getResources().getString(R.string.text_favorite_song));
                 mSongListDao.add(songListEntity);
-                mMusicDao.addAll(allList);
+                mMusicDao.addAll(mAllList);
                 mMusicList = new ArrayList<>();
             } else {
+                mAllList = mMusicDao.getAll();
                 mMusicList = mMusicDao.getMusicsByListId(1);
+
             }
             mMyFavoriteNum = mListInMusicDao.getListCount(2);
             mRecentReleaseNum = mRecentMusicDao.getAllCount();
-            mHistoryMostPlayNum = mRecentMusicDao.getMaxTimes();
             mAllSongNum = mMusicDao.getAllMusicCount();
             mSongListEntityList.clear();
+            mHistoryMostRecentEntity = mRecentMusicDao.getMaxTimesRecentEntity();
+            if(mHistoryMostMusicEntity == null) {
+                mHistoryMostMusicEntity = new MusicEntity();
+                mHistoryMostMusicEntity.setSongName("");
+            } else {
+                mHistoryMostMusicEntity = mMusicDao.getMusicById(mHistoryMostRecentEntity.getMusicId());
+            }
             mSongListEntityList.addAll( mSongListDao.getAllSongList() );
             for(int i = 0; i< mSongListEntityList.size(); i++) {
                 SongListEntity entity = mSongListEntityList.get(i);
                 entity.setSongNumber(mListInMusicDao.getListCount(entity.getId()) );
-                mSongListEntityList.set(i,entity);
             }
-            Logger.d(mSongListEntityList.toString());
+            Logger.d(mMusicList.toString());
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
-                    Logger.d(mCount);
                     if(UserManager.getInstance().getMyBinder() == null) {
                         initService();
-                    } else if(mCount > 0 && active == 1) {
-                        if(mMusicList.size() > 0) {
-                            mMyBinder.setMusicList(mMusicList);
-                            mMyBinder.setPos(0);
-                            mMyBinder.initMediaPlayer();
-                        } else {
-                            initNoMusic();
-                        }
                     }
-                    mAllSongNumberTextView.setText(mAllSongNum+"");
-                    mMyFavoriteNumberTextView.setText(mMyFavoriteNum+"");
-                    mRecentReleaseNumberTextView.setText(mRecentReleaseNum+"");
-                    mHistoryMostPlayNumberTextView.setText(mHistoryMostPlayNum+"");
-                    mCreatedSongListTextView.setText("创建的歌单("+mSongListEntityList.size()+")");
+                    mAllSongNumberTextView.setText(String.valueOf(mAllSongNum ));
+                    mMyFavoriteNumberTextView.setText(String.valueOf(mMyFavoriteNum) );
+                    mRecentReleaseNumberTextView.setText(String.valueOf(mRecentReleaseNum) );
+                    mHistoryMostPlayNumberTextView.setText(String.valueOf(mHistoryMostRecentEntity == null ? 0:mHistoryMostRecentEntity.getPlayTimes()) );
+                    mHistorySongNameTextView.setText(mHistoryMostMusicEntity == null? "":mHistoryMostMusicEntity.getSongName());
+
+                    String str = getString(R.string.replace_create_song_list);
+                    str = str.replace("*",String.valueOf(mSongListEntityList.size() ));
+                    mCreatedSongListTextView.setText(str);
                     mAdapter.notifyDataSetChanged();
                 }, throwable -> {
                     Logger.d(getResources().getString(R.string.error_load_date));
@@ -253,7 +279,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         mRecentReleaseNumberTextView = findViewById(R.id.home_item_recent_release_text_view);
         mHistoryMostPlayNumberTextView = findViewById(R.id.home_history_most_play_number_text_view);
         mCreatedSongListTextView = findViewById(R.id.home_created_song_list_text_view);
-
+        mHistorySongNameTextView = findViewById(R.id.home_history_song_name_text_view);
 
         mHistoryImageView = findViewById(R.id.home_history_image_view);
         mHistoryImageView.setOnClickListener(HomeActivity.this);
@@ -329,7 +355,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         int id = item.getItemId();
         switch (id){
             case R.id.menu_search:
-                SearchMusicActivity.go(HomeActivity.this);
+                SearchMusicActivity.go(HomeActivity.this,mAllList,getResources().getString(R.string.text_all_song));
                 break;
                 default:break;
         }
@@ -364,8 +390,8 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
                 MyFavoriteActivity.go(HomeActivity.this);
                 break;
             case R.id.home_playing_song_list_image_view:
-                SelectPlayListPopup playListPopup = new SelectPlayListPopup(this);
-                playListPopup.showPopup(mDrawerLayout);
+                mPlayListPopup = new SelectPlayListPopup(this);
+                mPlayListPopup.showPopup(mDrawerLayout);
                 break;
             case R.id.home_playing_music_image_layout:
                 MusicPlayingActivity.go(HomeActivity.this);
@@ -386,6 +412,12 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         }
     }
 
+    public void saveSetting() {
+        mSettingEntity.setIsPlayListId(UserManager.getInstance().getIsPlayListId());
+        mSettingEntity.setPlayMode(mMyBinder.getPlayMode() );
+        mSettingEntity.setPosition(mMyBinder.getPos() );
+        mManager.save(HomeActivity.this, mSettingEntity);
+    }
     @Override
     public void onBackPressed() {
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -394,9 +426,17 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         }
         long currentTime = System.currentTimeMillis();//获取第一次按键时间
         if (currentTime - mLastPressedTime > 2000) {
-            Toaster.showToast("再按一次退出程序");
+            Toaster.showToast(getString(R.string.message_press_again_finish));
             mLastPressedTime = currentTime;
         } else {
+            if(mHandler != null){
+                mHandler.removeCallbacks(mRunnable);
+                mHandler.removeCallbacksAndMessages(null);
+                mHandler = null;
+            }
+            mDisposable.clear();
+            mMyBinder.closeMusic();
+            unbindService(mServiceConnection);
             finish();
         }
     }
@@ -416,6 +456,8 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         } else {
             mPlayingControlImageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_border_start,null));
         }
+        initDate();
+        saveSetting();
         sInitTitleFlag = 1;
     }
     public void controlMusic() {
@@ -434,21 +476,29 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     public void nextMusic() {
         mMyBinder.nextMusic();
         sInitTitleFlag = 0;
+        if(mPlayListPopup !=null && mPlayListPopup.getPopupWindow() != null && mPlayListPopup.getPopupWindow().isShowing()) {
+            mPlayListPopup.changeListItem(mMyBinder.getPreciousPos());
+            mPlayListPopup.changeListItem(mMyBinder.getPos());
+        }
         initMusic();
     }
 
-    public void lastMusic() {
-        mMyBinder.lastMusic();
+    public void preciousMusic() {
+        mMyBinder.preciousMusic();
         sInitTitleFlag = 0;
+        if(mPlayListPopup !=null && mPlayListPopup.getPopupWindow() != null && mPlayListPopup.getPopupWindow().isShowing()) {
+            mPlayListPopup.changeListItem(mMyBinder.getPreciousPos());
+            mPlayListPopup.changeListItem(mMyBinder.getPos());
+        }
         initMusic();
     }
     @Override
     public void onRequestPermissionsResult(int requestCode,String[] permission,int[] grantResults) {
         switch (requestCode){
             case 1:if(grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED ) {
-                initDate(0);
+                initDate();
             }else{
-                Toaster.showToast("无法获得权限,程序将退出！");
+                Toaster.showToast(getString(R.string.error_get_permission_and_finish));
                 finish();
             }
             break;
@@ -464,23 +514,27 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
             mHandler = null;
         }
         mDisposable.clear();
-//        mMyBinder.closeMusic();
-//        unbindService(mServiceConnection);
+        mMyBinder.closeMusic();
+        unbindService(mServiceConnection);
     }
     private Runnable mRunnable = new Runnable() {
         @Override
         public void run() {
+            //Logger.d(mMyBinder.getPos());
             if(mMyBinder.getPos() >= 0 && mMyBinder.getPos() < mMyBinder.getListSize()) {
                 initMusic();
                 if(mMyBinder.getPlayPosition() >= mMyBinder.getDuration() - 1000) {
                     nextMusic();
                 }
                 mSeekBar.setProgress(mMyBinder.getPlayPosition());
+            } else if(sInitTitleFlag == 0){
+                initDate();
+                sInitTitleFlag = 1;
             }
             mHandler.postDelayed(mRunnable,1000);
         }
     };
-    private void initNoMusic () {
+    public void initNoMusic () {
         mSongNameTextView.setText(getResources().getString(R.string.label_music_player_welcome));
         mSingerNameTextView.setText("");
         mSeekBar.setProgress(0);
@@ -500,7 +554,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     static class MyHandler extends Handler {
-        private final WeakReference<HomeActivity> mActivty;
+        private final WeakReference mActivty;
 
         public MyHandler(HomeActivity activity){
             mActivty =new WeakReference(activity);

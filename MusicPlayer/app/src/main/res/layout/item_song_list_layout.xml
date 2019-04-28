@@ -63,7 +63,6 @@
     <ImageView
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_marginTop="6dp"
         app:srcCompat="@drawable/ic_menu_point"
         android:layout_marginEnd="24dp"
         android:tint="@color/gray"

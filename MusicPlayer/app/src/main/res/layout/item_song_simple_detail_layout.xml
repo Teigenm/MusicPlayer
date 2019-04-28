@@ -18,14 +18,22 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:gravity="center">
-
+        <ImageView
+            android:id="@+id/item_song_simple_detail_number_image_view"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:padding="4dp"
+            app:srcCompat="@drawable/ic_horn"
+            android:tint="@color/gray"
+            android:textStyle="bold"
+            android:visibility="invisible"/>
         <TextView
             android:id="@+id/item_song_simple_detail_number_text_view"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:text="@string/one"
             android:gravity="center"
-            android:textColor="@color/black"/>
+            android:textColor="@color/black" />
     </RelativeLayout>
     <TextView
         android:id="@+id/item_song_simple_detail_song_name_text_view"

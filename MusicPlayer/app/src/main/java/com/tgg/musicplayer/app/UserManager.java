@@ -3,13 +3,10 @@ package com.tgg.musicplayer.app;
 
 
 import com.tgg.musicplayer.service.MediaService;
-import com.tgg.musicplayer.storage.database.table.MusicEntity;
-
-import java.util.List;
 
 public class UserManager {
     private MediaService.MyBinder mMyBinder;
-    private List<MusicEntity> mAllList;
+    private int isPlayListId;
     private static UserManager sUserManager;
 
     public static UserManager getInstance() {
@@ -26,21 +23,21 @@ public class UserManager {
     public UserManager() {
     }
 
+    public UserManager(MediaService.MyBinder myBinder, int isPlayListId) {
+        mMyBinder = myBinder;
+        this.isPlayListId = isPlayListId;
+    }
+
     public UserManager(MediaService.MyBinder myBinder) {
         mMyBinder = myBinder;
     }
 
-    public UserManager(MediaService.MyBinder myBinder, List<MusicEntity> list) {
-        mMyBinder = myBinder;
-        mAllList = list;
+    public int getIsPlayListId() {
+        return isPlayListId;
     }
 
-    public List<MusicEntity> getAllList() {
-        return mAllList;
-    }
-
-    public void setAllList(List<MusicEntity> allList) {
-        mAllList = allList;
+    public void setIsPlayListId(int isPlayListId) {
+        this.isPlayListId = isPlayListId;
     }
 
     public void setMyBinder(MediaService.MyBinder myBinder) {

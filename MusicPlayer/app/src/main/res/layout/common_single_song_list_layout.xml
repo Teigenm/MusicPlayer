@@ -3,22 +3,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp"
     android:paddingEnd="4dp"
     android:paddingStart="4dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/single_song_list__layout"
+        android:id="@+id/single_song_list_random_play_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="4dp"
-        android:paddingBottom="8dp">
+        android:background="@drawable/liner_layout_water_selector"
+        android:paddingBottom="4dp">
 
         <ImageView
             android:id="@+id/single_song_list_play_mode_image_view"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:padding="2dp"
             android:tint="@color/gray"
             app:srcCompat="@drawable/ic_random_play"
             app:layout_constraintTop_toTopOf="parent"
@@ -29,7 +31,6 @@
             android:id="@+id/single_song_list_play_number_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
             android:layout_marginStart="8dp"
             android:text="@string/text_play_mode_and_number"
             app:layout_constraintTop_toTopOf="@id/single_song_list_play_mode_image_view"
@@ -37,6 +38,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
     <RelativeLayout
         android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="2dp"
         style="@style/horizontal_line_style">

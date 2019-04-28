@@ -35,7 +35,9 @@
         <activity
             android:name="com.tgg.musicplayer.ui.search.SearchMusicActivity"
             android:label=""
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize|stateHidden"
+            />
         <activity android:name="com.tgg.musicplayer.ui.song.AllSongActivity"
             android:label=""
             android:launchMode="singleTask" />
@@ -56,7 +58,7 @@
             android:label=""
             android:launchMode="singleTask" />
 
-        <service android:name=".service.MediaService">
+        <service android:name="com.tgg.musicplayer.service.MediaService">
         </service>
     </application>
 

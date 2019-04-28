@@ -1,22 +1,15 @@
 package com.tgg.musicplayer.ui.history;
 
-import android.content.Context;
-import android.util.AttributeSet;
 import android.widget.TextView;
 
 import com.tgg.musicplayer.R;
 import com.tgg.musicplayer.app.RecyclerAdapter;
 import com.tgg.musicplayer.app.RecyclerViewHolder;
-import com.tgg.musicplayer.app.RecyclerViewTouchListener;
-import com.tgg.musicplayer.storage.database.table.MusicEntity;
 import com.tgg.musicplayer.storage.database.table.RecentMusicEntity;
-import com.tgg.musicplayer.ui.song.RecentReleaseActivity;
 
 import java.util.List;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * @Author: tgg

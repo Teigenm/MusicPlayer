@@ -12,13 +12,14 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
+import androidx.appcompat.app.AlertDialog;
+
 import com.tgg.musicplayer.R;
 import com.tgg.musicplayer.storage.database.AppDatabase;
 import com.tgg.musicplayer.storage.database.dao.ListInMusicDao;
 import com.tgg.musicplayer.storage.database.dao.SongListDao;
-import com.tgg.musicplayer.storage.database.table.ListInMusicEntity;
-import com.tgg.musicplayer.storage.database.table.MusicEntity;
 import com.tgg.musicplayer.ui.home.EditOrAddSongListActivity;
+import com.tgg.musicplayer.ui.home.HomeActivity;
 import com.tgg.musicplayer.utils.Toaster;
 
 import io.reactivex.Completable;
@@ -42,9 +43,18 @@ public class SelectSongListOperationPopup implements View.OnClickListener {
     private AppDatabase mAppDatabase;
     private ListInMusicDao mListInMusicDao;
     private SongListDao mSongListDao;
+    private AlertDialog mAlertDialog;
 
+    private static SelectSongListOperationPopup sSelectSongListOperationPopup;
+    private static Object mLock = new Object();
+    public static SelectSongListOperationPopup getInstance() {
+        synchronized (mLock) {
+            return sSelectSongListOperationPopup;
+        }
+    }
     @SuppressWarnings("deprecation")
     public SelectSongListOperationPopup(Context context,long listId) {
+        sSelectSongListOperationPopup = this;
         mContext = context;
         mListId = listId;
         mDisposable = new CompositeDisposable();
@@ -65,10 +75,17 @@ public class SelectSongListOperationPopup implements View.OnClickListener {
             public boolean onTouch(View v, MotionEvent event) {
                 mPopupWindow.setFocusable(false);
                 mPopupWindow.dismiss();
+                mDisposable.clear();
                 return true;
             }
         });
-
+        mAlertDialog = DialogFactory.createAlertDialog(mContext,mContext.getResources().getString(R.string.message_confirm_delete_song_list), new DialogInterface.OnClickListener(){
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                deleteList();
+                HomeActivity.sInitTitleFlag = 0;
+            }
+        });
     }
 
     public View initViews() {
@@ -87,16 +104,11 @@ public class SelectSongListOperationPopup implements View.OnClickListener {
         switch (v.getId()) {
             case R.id.song_list_operation_edit_song_list_info_layout:
                 EditOrAddSongListActivity.go(mContext,1,mListId);
-                mPopupWindow.dismiss();
+                dismiss();
                 break;
             case R.id.song_list_operation_delete_song_list_layout:
-                DialogFactory.createAlertDialog(mContext,"你确定要删除该歌单吗？", new DialogInterface.OnClickListener(){
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        deleteList();
-                        mPopupWindow.dismiss();
-                    }
-                });
+                mAlertDialog.show();
+                dismiss();
                 break;
             default:
                 break;
@@ -110,7 +122,7 @@ public class SelectSongListOperationPopup implements View.OnClickListener {
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
-                    Toaster.showToast(mContext.getResources().getString(R.string.message_favorite_music_error));
+                    Toaster.showToast(mContext.getResources().getString(R.string.message_delete_music_success));
                 }, throwable -> {
 
                 }));
@@ -127,6 +139,7 @@ public class SelectSongListOperationPopup implements View.OnClickListener {
         if (mPopupWindow != null && mPopupWindow.isShowing()) {
             mPopupWindow.dismiss();
             mDisposable.clear();
+            HomeActivity.sInitTitleFlag = 0;
         }
     }
 

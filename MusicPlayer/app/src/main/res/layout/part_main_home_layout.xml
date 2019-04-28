@@ -27,55 +27,60 @@
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
-            <ImageView
-                android:id="@+id/home_vertical_line_one"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:paddingTop="1dp"
-                android:layout_marginStart="4dp"
-                app:srcCompat="@drawable/ic_vertical_line"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                />
-            <TextView
-                android:id="@+id/home_created_song_list_text_view"
-                android:layout_width="wrap_content"
+            android:orientation="vertical">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/text_created_song_list"
-                app:layout_constraintTop_toTopOf="@id/home_vertical_line_one"
-                app:layout_constraintStart_toEndOf="@id/home_vertical_line_one"/>
-            <TextView
-                android:id="@+id/home_new_song_list_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/text_new_song_list"
-                app:layout_constraintTop_toTopOf="@id/home_vertical_line_one"
-                app:layout_constraintEnd_toEndOf="@id/home_right_arrow_image_view"
-                android:layout_marginEnd="16dp"/>
-            <ImageView
-                android:id="@+id/home_right_arrow_image_view"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:paddingTop="4dp"
-                app:srcCompat="@drawable/ic_right_arrow"
-                app:layout_constraintTop_toTopOf="@id/home_vertical_line_one"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginEnd="16dp"/>
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
+                <ImageView
+                    android:id="@+id/home_vertical_line_one"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:paddingTop="1dp"
+                    android:layout_marginStart="4dp"
+                    app:srcCompat="@drawable/ic_vertical_line"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    />
+                <TextView
+                    android:id="@+id/home_created_song_list_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_created_song_list"
+                    app:layout_constraintTop_toTopOf="@id/home_vertical_line_one"
+                    app:layout_constraintStart_toEndOf="@id/home_vertical_line_one"/>
+                <TextView
+                    android:id="@+id/home_new_song_list_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_new_song_list"
+                    app:layout_constraintTop_toTopOf="@id/home_vertical_line_one"
+                    app:layout_constraintEnd_toEndOf="@id/home_right_arrow_image_view"
+                    android:layout_marginEnd="16dp"/>
+                <ImageView
+                    android:id="@+id/home_right_arrow_image_view"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:paddingTop="4dp"
+                    app:srcCompat="@drawable/ic_right_arrow"
+                    app:layout_constraintTop_toTopOf="@id/home_vertical_line_one"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginEnd="16dp"/>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/home_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/home_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="none" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

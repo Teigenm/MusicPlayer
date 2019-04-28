@@ -213,7 +213,7 @@ public class EditOrAddSongListActivity extends ToolbarActivity {
                 } else {
                     add();
                 }
-                HomeActivity.getInstance().initDate(1);
+                HomeActivity.sInitTitleFlag = 0;
             }
         });
     }

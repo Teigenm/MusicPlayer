@@ -1,7 +1,6 @@
 package com.tgg.musicplayer.storage.database.table;
 
 import androidx.room.ColumnInfo;
-import androidx.room.Dao;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;

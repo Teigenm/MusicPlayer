@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 
 import com.tgg.musicplayer.storage.database.AppDatabase;
-import com.tgg.musicplayer.storage.database.dao.SongListDao;
 import com.tgg.musicplayer.utils.Toaster;
 
 public class MusicApplication extends Application {

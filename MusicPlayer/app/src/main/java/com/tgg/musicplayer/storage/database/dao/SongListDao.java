@@ -9,7 +9,6 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
-import io.reactivex.Flowable;
 
 /**
  * @Author: tgg
@@ -30,6 +29,9 @@ public interface SongListDao {
 
     @Query("SELECT * FROM song_list_info WHERE id != 1 AND id != 2")
     List<SongListEntity> getAllSongList();
+
+    @Query("SELECT * FROM song_list_info ORDER BY id ASC")
+    List<SongListEntity> getAllListOrderById();
 
     @Query("DELETE FROM song_list_info WHERE id = :listId")
     void deleteById(long listId);
