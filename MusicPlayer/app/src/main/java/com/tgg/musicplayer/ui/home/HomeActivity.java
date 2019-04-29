@@ -225,12 +225,12 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
             mRecentReleaseNum = mRecentMusicDao.getAllCount();
             mAllSongNum = mMusicDao.getAllMusicCount();
             mSongListEntityList.clear();
-            mHistoryMostRecentEntity = mRecentMusicDao.getMaxTimesRecentEntity();
-            if(mHistoryMostMusicEntity == null) {
+            if(mRecentMusicDao.getAllCount() > 0) {
+                mHistoryMostRecentEntity = mRecentMusicDao.getMaxTimesRecentEntity();
+                mHistoryMostMusicEntity = mMusicDao.getMusicById(mHistoryMostRecentEntity.getMusicId());
+            } else {
                 mHistoryMostMusicEntity = new MusicEntity();
                 mHistoryMostMusicEntity.setSongName("");
-            } else {
-                mHistoryMostMusicEntity = mMusicDao.getMusicById(mHistoryMostRecentEntity.getMusicId());
             }
             mSongListEntityList.addAll( mSongListDao.getAllSongList() );
             for(int i = 0; i< mSongListEntityList.size(); i++) {
